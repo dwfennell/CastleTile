@@ -1,6 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Web
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5A44221A-E7E7-4ADF-8BC9-48C88EC62125}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{90124B1B-A615-4984-9BEE-EC29651117C1}"
+	ProjectSection(SolutionItems) = preProject
+		css\style.css = css\style.css
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{C19F21D2-633B-4325-8CF7-C2B2E9AB61A5}"
+	ProjectSection(SolutionItems) = preProject
+		js\index.js = js\index.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "html", "html", "{E69B5818-B48E-4F15-8351-B602BCB69F81}"
+	ProjectSection(SolutionItems) = preProject
+		index.html = index.html
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
