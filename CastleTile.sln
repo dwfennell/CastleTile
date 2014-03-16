@@ -31,7 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{C110B117-BE4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{B24ABBC2-875E-42B5-91A3-26ED266CDB36}"
 	ProjectSection(SolutionItems) = preProject
-		game.js = game.js
+		js\app\board.js = js\app\board.js
+		js\app\settings.js = js\app\settings.js
 	EndProjectSection
 EndProject
 Global
