@@ -3,194 +3,193 @@ define({
           {
               "filepath": "city_grass.png",
               "num": "3",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "gccc",
               "interior": "gccc",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "city_grass_2.png",
               "num": "3",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "gccg",
               "interior": "gccg",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "city_grass_3.png",
               "num": "1",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "gcgc",
               "interior": "gcgc",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "city_grass_road.png",
               "num": "1",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rccc",
               "interior": "eccc",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "city_grass_road_2.png",
               "num": "3",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rccr",
               "interior": "ccrr",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "city_grass_road_sheild.png",
               "num": "2",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rccc",
               "interior": "eccc",
-              "shield": "1"
           },
           {
               "filepath": "city_grass_road_shield_2.png",
               "num": "2",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rccr",
               "interior": "rccr",
-              "shield": "1"
+              "shield": true
           },
           {
               "filepath": "city_grass_shield.png",
               "num": "1",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "gccc",
               "interior": "gccc",
-              "shield": "1"
+             "shield": true
           },
           {
               "filepath": "city_grass_shield_3.png",
               "num": "2",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "gcgc",
               "interior": "gcgc",
-              "shield": "1"
+             "shield": true
           },
           {
               "filepath": "city_grass_shield_2.png",
               "num": "2",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "gccg",
               "interior": "gccg",
-              "shield": "1"
+             "shield": true
           },
           {
               "filepath": "city_shield.png",
               "num": "1",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "cccc",
               "interior": "cccc",
-              "shield": "1"
+             "shield": true
           },
           {
               "filepath": "cloister.png",
               "num": "4",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "gggg",
               "interior": "gggg",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "cloister_road.png",
               "num": "2",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rggg",
               "interior": "eggg",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_city.png",
               "num": "2",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "gccg",
               "interior": "gggg",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_city_2.png",
               "num": "3",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "cgcg",
               "interior": "gggg",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_city_3.png",
               "num": "5",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "ggcg",
               "interior": "gggg",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_city_road.png",
               "num": "3",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rrcg",
               "interior": "rrgg",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_city_road_2.png",
               "num": "3",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rgcr",
               "interior": "rggr",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_city_road_3.png",
               "num": "3",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rrcr",
               "interior": "eege",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_city_road_4.png",
               "num": "4",
-              "isStartingTile": "1",
+              "isStartingTile": true,
               "edges": "grcr",
               "interior": "grgr",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_road.png",
               "num": "8",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rgrg",
               "interior": "rgrg",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_road_2.png",
               "num": "9",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rrgg",
               "interior": "rrgg",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_road_3.png",
               "num": "4",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rrgr",
               "interior": "eege",
-              "shield": "0"
+              "shield": false
           },
           {
               "filepath": "grass_road_4.png",
               "num": "1",
-              "isStartingTile": "0",
+              "isStartingTile": false,
               "edges": "rrrr",
               "interior": "eeee",
-              "shield": "0"
+              "shield": false
           }
     ]
 });

@@ -6,13 +6,11 @@ requirejs.config({
     }
 });
 
-requirejs(['app/board', 'data/base-set'],
+requirejs(['app/board'],
 function (board, tileSet) {
-    board.drawTile(0, 0);
-    board.drawTile(1, 3);
-    
-    board.addTiles(tileSet);
 
-    var tile = board.pickTile();
+    board.paintNewTile(board.startingTile);
 
+    board.paintTile(0, 0, board.pickTile());
+    board.paintTile(1, 2, board.pickTile());
 });
