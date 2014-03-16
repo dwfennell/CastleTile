@@ -66,10 +66,10 @@
         .attr("width", gameSettings.boardWidth)
         .attr("height", gameSettings.boardHeight);
 
-    var newTileContainer = d3.select("#new-tile-zone")
+    var newTileContainer = d3.select("#new-tile-entry")
                .append("svg:svg")
-               .attr("width", gameSettings.tileLength + 20)
-               .attr("height", gameSettings.tileLength + 20);
+               .attr("width", gameSettings.tileLength)
+               .attr("height", gameSettings.tileLength);
 
     
     // Populate tiles and startinTile.

@@ -5,12 +5,25 @@
         <title>Castle Tile</title>
         
         <link rel="stylesheet" href="css/style.css" media="screen" type="text/css" />
-        
         <script data-main="js/app.js" src="js/require.js"></script>
     </head>
 
     <body>
-        <div id="new-tile-zone"></div><div id="follower-pool"></div>
-        <div id="board"></div>
+        <table>
+            <tr>
+                <td>
+                    <div id="new-tile-zone">
+                        <button id="pick-new-tile-btn">Draw Tile</button>
+                        <div id="new-tile-entry"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><div id="follower-pool"></div></td>
+            </tr>
+            <tr>
+                <td><div id="board"></div></td>
+            </tr>
+        </table>
     </body>
 </html>
