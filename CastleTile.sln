@@ -33,6 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{B24ABBC2-875
 	ProjectSection(SolutionItems) = preProject
 		js\app\board.js = js\app\board.js
 		js\app\settings.js = js\app\settings.js
+		js\app\tiles.js = js\app\tiles.js
 	EndProjectSection
 EndProject
 Global

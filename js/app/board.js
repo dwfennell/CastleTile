@@ -1,41 +1,4 @@
-﻿define(['d3', 'app/settings', 'data/base-set'], function (d3, gameSettings, tileDefinitions) {
-    
-    function parseTiles(tileSet) {
-        // We expect tileSet to be an array of tile objects formatted like: 
-        //
-        //  { 
-        //      num: <int: number copies of this tile in the set>, 
-        //      edges: <edge-of-tile code>,
-        //      interior: <inside-of-tile code>,
-        //      sheild: <boolean: does this tile have a sheild>
-        //      isStartingTile: <boolean: is this the starting tile?>
-        //  }
-
-        var makeTile = function makeTile(input) {
-            return {
-                edges: input.edges,
-                interior: input.interior,
-                isStartingTile: input.isStartingTile,
-                hasShield: input.shield
-            };
-        }
-
-        var importedTiles = [];
-        var startingTile;
-        tileSet.tiles.forEach(function (tileDef) {
-            for (var i = 0; i < tileDef.num; i++) {
-                // tileDef.num determines how many tiles of this type are in the set.
-                
-                if (tileDef.isStartingTile === true) {
-                    startingTile = makeTile(tileDef);
-                } else {
-                    importedTiles.push(makeTile(tileDef));
-                }
-            }
-        });
-
-        return { tiles: importedTiles, startingTile: startingTile };
-    }
+﻿define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, gameSettings, tileDefinitions, d3) {
 
     function paintTilePixelCoords(x, y, tile, container) {
         container.append("svg:rect")
@@ -71,18 +34,11 @@
                .attr("width", gameSettings.tileLength)
                .attr("height", gameSettings.tileLength);
 
-    
-    // Populate tiles and startinTile.
-    var tileData = parseTiles(tileDefinitions);
-    var startingTile = tileData.startingTile;
-    var tiles = tileData.tiles;
-
     var board = {
         paintTile:
             function (x, y, tile) {
                 var xPix = x * gameSettings.tileLength;
                 var yPix = y * gameSettings.tileLength;
-
                 paintTilePixelCoords(xPix, yPix, tile, boardContainer);
             },
 
@@ -91,15 +47,8 @@
                 paintTilePixelCoords(0, 0, tile, newTileContainer);
             },
 
-        pickTile:
-            function () {
-                d3.shuffle(tiles);
-                tile = tiles.pop();
-
-                console.log("Picked a tile! Edges:" + tile.edges + " , Interior: " + tile.interior + ". Tiles left: " + tiles.length);
-                return tile;
-            },
-        startingTile: startingTile
+        pickTile: tiles.pickTile,
+        startingTile: tiles.startingTile
     };
     
     return board;
