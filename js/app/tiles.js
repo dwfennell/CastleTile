@@ -48,7 +48,11 @@ define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
                 var tile = pile.pop();
                 console.log("Picked a tile! Edges:" + tile.edges + " , Interior: " + tile.interior + ". Tiles left: " + tiles.pile.length);
                 return tile;
-            }
+            },
+        isMoreTiles:
+            function () {
+                return pile.length > 0;
+            },
     }
 
     return tiles;

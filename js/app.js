@@ -8,9 +8,6 @@ requirejs.config({
 
 requirejs(['app/board'],
 function (board, tileSet) {
-
-    board.paintNewTile(board.startingTile);
-
     board.paintTile(0, 0, board.pickTile());
     board.paintTile(1, 2, board.pickTile());
 });
