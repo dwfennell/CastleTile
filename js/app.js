@@ -6,8 +6,7 @@ requirejs.config({
     }
 });
 
-requirejs(['app/board'],
-function (board, tileSet) {
-    board.paintTile(0, 0, board.pickTile());
-    board.paintTile(1, 2, board.pickTile());
+requirejs(['app/game'],
+function (game) {
+    game.start();
 });

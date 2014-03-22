@@ -36,24 +36,24 @@ define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
         return startingTile;
     }
 
+    function pickTile() {
+        d3.shuffle(pile);
+        var tile = pile.pop();
+        console.log("Picked a tile! Edges:" + tile.edges + " , Interior: " + tile.interior + ". Tiles left: " + pile.length);
+        return tile;
+    }
+    
+    function isMoreTiles () {
+        return pile.length > 0;
+    }
+
     var pile = [];
     var startTile = parseTiles(tileDefinitions);
 
-    var tiles = {
+    return {
         pile: pile,
         startingTile: startTile,
-        pickTile:
-            function () {
-                d3.shuffle(pile);
-                var tile = pile.pop();
-                console.log("Picked a tile! Edges:" + tile.edges + " , Interior: " + tile.interior + ". Tiles left: " + tiles.pile.length);
-                return tile;
-            },
-        isMoreTiles:
-            function () {
-                return pile.length > 0;
-            },
-    }
-
-    return tiles;
+        pickTile: pickTile,
+        isMoreTiles: isMoreTiles
+    };
 });

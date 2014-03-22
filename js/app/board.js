@@ -34,12 +34,12 @@
         paintTilePixelCoords(xPix, yPix, tile, boardContainer);
     }
 
-    function paintNewTile(tile) {
+    function paintNewTile (tile) {
         d3.selectAll("unplaced-tile").remove();
         paintTilePixelCoords(0, 0, tile, newTileContainer, "unplaced-tile");
     }
 
-    function getNewTile() {
+    function getNewTile () {
         if (tiles.isMoreTiles()) {
             var currentUnplacedTile = isFirstTurn ? tiles.startingTile : tiles.pickTile();
             paintNewTile(currentUnplacedTile);
@@ -49,28 +49,33 @@
         }
     };
 
-    var isFirstTurn = true;
+    function init() {
+        isFirstTurn = true;
+
+        d3.select("#new-tile-button")
+            .on('click', getNewTile)
+
+        boardContainer = d3.select("#board")
+            .append("svg:svg")
+            .attr("width", gameSettings.boardWidth)
+            .attr("height", gameSettings.boardHeight);
+
+        newTileContainer = d3.select("#new-tile-entry")
+            .append("svg:svg")
+            .attr("width", gameSettings.tileLength)
+            .attr("height", gameSettings.tileLength);
+    }
+
+    var isFirstTurn;
     var currentUnplacedTile;
+    var boardContainer;
+    var newTileContainer;
 
-    d3.select("#new-tile-button")
-        .on('click', getNewTile)
-
-    var boardContainer = d3.select("#board")
-        .append("svg:svg")
-        .attr("width", gameSettings.boardWidth)
-        .attr("height", gameSettings.boardHeight);
-
-    var newTileContainer = d3.select("#new-tile-entry")
-               .append("svg:svg")
-               .attr("width", gameSettings.tileLength)
-               .attr("height", gameSettings.tileLength);
-
-    var board = {
+    return {
+        init: init,
         paintTile: paintTile,
         paintNewTile: paintNewTile,
         pickTile: tiles.pickTile,
         startingTile: tiles.startingTile
     };
-    
-    return board;
 });
