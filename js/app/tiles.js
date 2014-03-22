@@ -1,3 +1,4 @@
+"use strict";
 define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
 
     function parseTiles(tileSet) {
