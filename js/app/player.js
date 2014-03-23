@@ -1,3 +1,4 @@
+"use strict";
 define([], function () {
     function addPoints(num) {
         points += num;

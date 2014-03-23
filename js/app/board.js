@@ -91,11 +91,40 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
 
         for (var i = 0; i < tileArray.length; i++) {
             for (var j = 0; j < tileArray[i].length; j++) {
-                if (tileArray[i][j] === null) {
+                if (canPlaceTile(tileArray, i, j)) {
                     setAvailableSpace(i, j);
                 }
             }
         }
+    }
+
+    function canPlaceTile(tileArray, x, y) {
+        var tile = tileArray[x][y];
+
+        if (tile !== null) {
+            // Coordinates occupied.
+            return false;
+        }
+
+        if (tileArray.length === 1 && tileArray[x].length === 1) {
+            // First turn.
+            return true;
+        }
+
+        // Are we connected to any tile at all? 
+        var isTouchingATile = false;
+        if (x > 0 && tileArray[x - 1][y] !== null) {
+            isTouchingATile = true;
+        } else if (x < tileArray.length - 1 && tileArray[x + 1][y] !== null) {
+            isTouchingATile = true;
+        } else if (y > 0 && tileArray[x][y - 1] !== null) {
+            isTouchingATile = true;
+        } else if (y < tileArray[x].length - 1 && tileArray[x][y + 1] !== null) {
+            isTouchingATile = true;
+        }
+
+        // More here later. Need to check tile compatability.
+        return isTouchingATile;
     }
 
     function getNewTile() {
@@ -183,7 +212,6 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
 
     function redrawBoard(placedTiles) {
         clearBoard();
-        debugger;
 
         for (var i = 0; i < placedTiles.length; i++) {
             for (var j = 0; j < placedTiles[i].length; j++) {
