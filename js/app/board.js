@@ -85,7 +85,7 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
 
     // Game logic functions.
 
-    function selectSpace(x, y) {
+    function selectSpace() {
         if (currentUnplacedTile) {
             placeTile(x, y, currentUnplacedTile);
             resetNewTile();
@@ -96,7 +96,17 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
     }
 
     function setAvailableSpace(x, y) {
-        paintSquare(boardContainer, x, y, AVAILABLE_SPACE_CLASS, selectSpace);
+        var selectSpaceCallback = function selectSpaceCallback() {
+            if (currentUnplacedTile) {
+                placeTile(x, y, currentUnplacedTile);
+                resetNewTile();
+                currentUnplacedTile = null;
+
+                d3.selectAll("." + AVAILABLE_SPACE_CLASS).remove();
+            }
+        }
+        
+        paintSquare(boardContainer, x, y, AVAILABLE_SPACE_CLASS, selectSpaceCallback);
     }
 
     function highlightAvailableSpaces(tileArray, tile) {
