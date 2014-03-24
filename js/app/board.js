@@ -1,10 +1,28 @@
 ﻿"use strict";
 define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, gameSettings, tileDefinitions, d3) {
+
+    // Drawing functions.
+    
+    function paintTileDetails(xStartPix, yStartPix, tile) {
+        var tileWidth = gameSettings.tileLength;
+        var roadWidth = gameSettings.roadWidth * tileWidth;
+        
+        // TODO: paint tile details.
+    }
+
+    function paintTile (x, y, tile) {
+        var xPix = x * gameSettings.tileLength;
+        var yPix = y * gameSettings.tileLength;
+        paintTilePixelCoords(boardContainer, xPix, yPix, tile, PLACED_TILE_CLASS);
+    }
+
     function paintTilePixelCoords(container, x, y, tile, addClass) {
         if (!addClass)
             addClass = ""
 
         paintSquarePixelCoords(container, x, y, "tile " + addClass);
+
+        paintTileDetails(x, y, tile);
 
         if (tile !== undefined) {
             container.append("text")
@@ -23,12 +41,6 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
                 .text("i: " + tile.interior);
         }
     }
-    
-    function paintTile (x, y, tile) {
-        var xPix = x * gameSettings.tileLength;
-        var yPix = y * gameSettings.tileLength;
-        paintTilePixelCoords(boardContainer, xPix, yPix, tile, PLACED_TILE_CLASS);
-    }
 
     function paintNewTile (tile) {
         resetNewTile();
@@ -39,16 +51,11 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         d3.selectAll("." + UNPLACED_TILE_CLASS).remove();
     }
 
-    function clearBoard() {
-        d3.selectAll("." + PLACED_TILE_CLASS).remove();
-        d3.selectAll("." + AVAILABLE_SPACE_CLASS).remove();
-    }
-
-    function paintSquare (container, x, y, addClass, onClick) {
+    function paintSquare(container, x, y, addClass, onClick) {
         paintSquarePixelCoords(container, x * gameSettings.tileLength, y * gameSettings.tileLength, addClass, onClick);
     }
 
-    function paintSquarePixelCoords (container, x, y, addClass, onClick) {
+    function paintSquarePixelCoords(container, x, y, addClass, onClick) {
         if (!addClass) {
             addClass = "";
         }
@@ -66,27 +73,33 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
 
         // Add onClick callback.
         if (onClick) {
-            d3.selectAll("." + idClass)
-                .on("click", onClick);
+            d3.selectAll("." + idClass).on("click", onClick);
+        }
+    }
+
+    function clearBoard() {
+        d3.selectAll("." + PLACED_TILE_CLASS).remove();
+        d3.selectAll("." + AVAILABLE_SPACE_CLASS).remove();
+    }
+    
+
+    // Game logic functions.
+
+    function selectSpace(x, y) {
+        if (currentUnplacedTile) {
+            placeTile(x, y, currentUnplacedTile);
+            resetNewTile();
+            currentUnplacedTile = null;
+
+            d3.selectAll("." + AVAILABLE_SPACE_CLASS).remove();
         }
     }
 
     function setAvailableSpace(x, y) {
-        var availableSpaceCallback = function () {
-            if (currentUnplacedTile) {
-                placeTile(x, y, currentUnplacedTile);
-                resetNewTile();
-                currentUnplacedTile = null;
-
-                d3.selectAll("." + AVAILABLE_SPACE_CLASS).remove();
-            }
-        }
-
-        paintSquare(boardContainer, x, y, AVAILABLE_SPACE_CLASS, availableSpaceCallback);
+        paintSquare(boardContainer, x, y, AVAILABLE_SPACE_CLASS, selectSpace);
     }
 
     function highlightAvailableSpaces(tileArray, tile) {
-        // Simplified version, will update when tile comparisions are ready. 
         if (!tileArray) return;
 
         for (var i = 0; i < tileArray.length; i++) {
@@ -157,9 +170,7 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
                 isLastColEmpty = false;
             }
         }
-
-        //console.log("fr: " + isFirstRowEmpty + ", lr: " + isLastRowEmpty + ", fc: " + isFirstColEmpty + ", lc: " + isLastColEmpty);
-
+        
         if (!isFirstColEmpty) {
             tileArray.forEach(function (entry) {
                 entry.splice(0, 0, null);
@@ -181,10 +192,10 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         }
     }
 
+    // REWRITE WITH BETTER D3.
     function redrawBoard(placedTiles) {
         clearBoard();
-        debugger;
-
+        
         for (var i = 0; i < placedTiles.length; i++) {
             for (var j = 0; j < placedTiles[i].length; j++) {
                 if (placedTiles[i][j] != null) {
@@ -195,9 +206,7 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
     }
 
     function placeTile(x, y, tile) {
-        //paintTile(x, y, tile);
         updateTilesArray(placedTiles, x, y, tile);
-        
         redrawBoard(placedTiles);
     }
     
@@ -225,7 +234,6 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
     var UNPLACED_TILE_CLASS = "unplaced-tile";
     var PLACED_TILE_CLASS = "placed-tile";
 
-
     var isFirstTurn;
     var currentUnplacedTile;
     var boardContainer;
@@ -237,9 +245,6 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
     ];
 
     return {
-        init: init,
-        newTile: paintNewTile,
-        pickTile: tiles.pickTile,
-        placeTile: placeTile
+        init: init
     };
 });
