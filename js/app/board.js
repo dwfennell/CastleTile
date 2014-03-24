@@ -3,11 +3,43 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
 
     // Drawing functions.
     
-    function paintTileDetails(xStartPix, yStartPix, tile) {
-        var tileWidth = gameSettings.tileLength;
-        var roadWidth = gameSettings.roadWidth * tileWidth;
-        
-        // TODO: paint tile details.
+    function paintTileDetails(container, xStartPix, yStartPix, tile, addClass) {
+        if (!addClass) addClass = "";
+
+        var tileLength = gameSettings.tileLength;
+        var roadLength = gameSettings.roadSize * tileLength;
+        var edgeLength = gameSettings.edgeSize * tileLength;
+
+        // TODO: rotate tile as necessary. 
+
+        // Draw roads.
+        var roadClass = addClass + " road";
+        if (tile.edges[0] === "r") {
+            // bottom
+            var xPix = xStartPix + (tileLength / 2) - (roadLength / 2);
+            var yPix = yStartPix + tileLength - edgeLength;
+            paintRectanglePixelCoords(container, xPix, yPix, roadLength, edgeLength, roadClass);
+        }
+        if (tile.edges[1] === "r") {
+            // left
+            var xPix = xStartPix;
+            var yPix = yStartPix + (tileLength / 2) - (roadLength / 2);
+            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass);
+        }
+        if (tile.edges[2] === "r") {
+            // right
+            var xPix = xStartPix + tileLength - edgeLength;
+            var yPix = yStartPix + (tileLength / 2) - (roadLength / 2);
+            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass);
+        }
+        if (tile.edges[3] === "r") {
+            // top
+            var xPix = xStartPix + tileLength / 2 - roadLength / 2;
+            paintRectanglePixelCoords(container, xPix, yStartPix, roadLength, edgeLength, roadClass);
+        }
+
+        // TODO: Draw city edges.
+        // TODO: Draw tile interiors.
     }
 
     function paintTile (x, y, tile) {
@@ -17,12 +49,11 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
     }
 
     function paintTilePixelCoords(container, x, y, tile, addClass) {
-        if (!addClass)
-            addClass = ""
+        if (!addClass) addClass = "";
 
         paintSquarePixelCoords(container, x, y, "tile " + addClass);
 
-        paintTileDetails(x, y, tile);
+        paintTileDetails(container, x, y, tile, addClass);
 
         if (tile !== undefined) {
             container.append("text")
@@ -51,14 +82,8 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         d3.selectAll("." + UNPLACED_TILE_CLASS).remove();
     }
 
-    function paintSquare(container, x, y, addClass, onClick) {
-        paintSquarePixelCoords(container, x * gameSettings.tileLength, y * gameSettings.tileLength, addClass, onClick);
-    }
-
-    function paintSquarePixelCoords(container, x, y, addClass, onClick) {
-        if (!addClass) {
-            addClass = "";
-        }
+    function paintRectanglePixelCoords(container, x, y, width, height, addClass, onClick) {
+        if (!addClass) addClass = "";
 
         // Class to uniquely idenify this box.
         var idClass = "sqr-id" + squareId++;
@@ -67,14 +92,22 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         container.append("svg:rect")
             .attr("x", x)
             .attr("y", y)
-            .attr("height", gameSettings.tileLength)
-            .attr("width", gameSettings.tileLength)
+            .attr("height", height)
+            .attr("width", width)
             .attr("class", addClass);
 
         // Add onClick callback.
         if (onClick) {
             d3.selectAll("." + idClass).on("click", onClick);
         }
+    }
+
+    function paintSquare(container, x, y, addClass, onClick) {
+        paintSquarePixelCoords(container, x * gameSettings.tileLength, y * gameSettings.tileLength, addClass, onClick);
+    }
+
+    function paintSquarePixelCoords(container, x, y, addClass, onClick) {
+        paintRectanglePixelCoords(container, x, y, gameSettings.tileLength, gameSettings.tileLength, addClass, onClick);
     }
 
     function clearBoard() {
