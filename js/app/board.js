@@ -246,7 +246,6 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
     }
 
     function getNewTile() {
-        isFirstTurn = false;
         if (!tiles.isMoreTiles()) {
             alert("No tiles left!");
         }
@@ -254,6 +253,7 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         currentUnplacedTile = isFirstTurn ? tiles.startingTile : tiles.pickTile();
         paintNewTile(currentUnplacedTile);
         highlightAvailableSpaces(placedTiles, currentUnplacedTile);
+        isFirstTurn = false;
     };
 
     function updateTilesArray(tileArray, x, y, tile) {
