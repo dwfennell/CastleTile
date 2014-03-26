@@ -38,9 +38,68 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
             paintRectanglePixelCoords(container, xPix, yStartPix, roadLength, edgeLength, roadClass);
         }
 
-        // TODO: Draw city edges.
+        // Draw cities.
+        if (tile.edges[0] === "c") {
+            // Bottom
+            var points = [
+                [xStartPix, yStartPix + tileLength],
+                [xStartPix + edgeLength, yStartPix + tileLength - edgeLength],
+                [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
+                [xStartPix + tileLength, yStartPix + tileLength]
+            ];
+
+            makePolygon(container, points, addClass + " city");
+        }
+        if (tile.edges[1] === "c") {
+            // Left
+            var points = [
+                [xStartPix, yStartPix],
+                [xStartPix + edgeLength, yStartPix + edgeLength],
+                [xStartPix + edgeLength, yStartPix + tileLength - edgeLength],
+                [xStartPix, yStartPix + tileLength]
+            ];
+
+            makePolygon(container, points, addClass + " city");
+        }
+        if (tile.edges[2] === "c") {
+            // Right 
+            var points = [
+                [xStartPix + tileLength, yStartPix],
+                [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
+                [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
+                [xStartPix + tileLength, yStartPix + tileLength]
+            ];
+
+            makePolygon(container, points, addClass + " city");
+        }
+        if (tile.edges[3] === "c") {
+            // Top
+            var points = [
+                [xStartPix, yStartPix],
+                [xStartPix + edgeLength, yStartPix + edgeLength],
+                [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
+                [xStartPix + tileLength, yStartPix]
+            ];
+
+            makePolygon(container, points, addClass + " city");
+        }
+
         // TODO: Draw tile interiors.
     }
+
+    function makePolygon(container, points, addClass) {
+        // Make a polygon.
+        if (!addClass) addClass = "";
+
+        var line = d3.svg.line()
+            .x(function (d, i) { return d[0]; })
+            .y(function (d, i) { return d[1]; });
+
+        container.append("svg:path")
+            .attr("d", line(points))
+            .attr("class", addClass);
+    }
+
 
     function paintTile (x, y, tile) {
         var xPix = x * gameSettings.tileLength;
@@ -55,22 +114,22 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
 
         paintTileDetails(container, x, y, tile, addClass);
 
-        if (tile !== undefined) {
-            container.append("text")
-                .attr("x", x)
-                .attr("y", y)
-                .attr("dy", ".85em")
-                .attr("dx", ".1em")
-                .attr("class", addClass)
-                .text("e: " + tile.edges);
-            container.append("text")
-                .attr("x", x)
-                .attr("y", y)
-                .attr("dy", "1.85em")
-                .attr("dx", ".1em")
-                .attr("class", addClass)
-                .text("i: " + tile.interior);
-        }
+        //if (tile !== undefined) {
+        //    container.append("text")
+        //        .attr("x", x)
+        //        .attr("y", y)
+        //        .attr("dy", ".85em")
+        //        .attr("dx", ".1em")
+        //        .attr("class", addClass)
+        //        .text("e: " + tile.edges);
+        //    container.append("text")
+        //        .attr("x", x)
+        //        .attr("y", y)
+        //        .attr("dy", "1.85em")
+        //        .attr("dx", ".1em")
+        //        .attr("class", addClass)
+        //        .text("i: " + tile.interior);
+        //}
     }
 
     function paintNewTile (tile) {
