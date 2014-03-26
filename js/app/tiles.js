@@ -48,6 +48,16 @@ define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
         return pile.length > 0;
     }
 
+    function rotateTile(tile) {
+        var e = tile.edges;
+        var i = tile.interior;
+
+        tile.edges = [e[1], e[2], e[3], e[0]].join("");
+        tile.interior = [i[1], i[2], i[3], i[0]].join("");
+
+        return tile;
+    }
+
     var pile = [];
     var startTile = parseTiles(tileDefinitions);
 
@@ -55,6 +65,7 @@ define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
         pile: pile,
         startingTile: startTile,
         pickTile: pickTile,
-        isMoreTiles: isMoreTiles
+        isMoreTiles: isMoreTiles,
+        rotateTile: rotateTile
     };
 });

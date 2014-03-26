@@ -10,9 +10,8 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         var roadLength = gameSettings.roadSize * tileLength;
         var edgeLength = gameSettings.edgeSize * tileLength;
 
-        // TODO: rotate tile as necessary. 
-
         // Draw roads.
+
         var roadClass = addClass + " road";
         if (tile.edges[0] === "r") {
             // bottom
@@ -27,15 +26,15 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
             paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass);
         }
         if (tile.edges[2] === "r") {
+            // top
+            var xPix = xStartPix + tileLength / 2 - roadLength / 2;
+            paintRectanglePixelCoords(container, xPix, yStartPix, roadLength, edgeLength, roadClass);
+        }
+        if (tile.edges[3] === "r") {
             // right
             var xPix = xStartPix + tileLength - edgeLength;
             var yPix = yStartPix + (tileLength / 2) - (roadLength / 2);
             paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass);
-        }
-        if (tile.edges[3] === "r") {
-            // top
-            var xPix = xStartPix + tileLength / 2 - roadLength / 2;
-            paintRectanglePixelCoords(container, xPix, yStartPix, roadLength, edgeLength, roadClass);
         }
 
         // Draw cities.
@@ -62,23 +61,23 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
             makePolygon(container, points, addClass + " city");
         }
         if (tile.edges[2] === "c") {
-            // Right 
-            var points = [
-                [xStartPix + tileLength, yStartPix],
-                [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
-                [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
-                [xStartPix + tileLength, yStartPix + tileLength]
-            ];
-
-            makePolygon(container, points, addClass + " city");
-        }
-        if (tile.edges[3] === "c") {
             // Top
             var points = [
                 [xStartPix, yStartPix],
                 [xStartPix + edgeLength, yStartPix + edgeLength],
                 [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
                 [xStartPix + tileLength, yStartPix]
+            ];
+
+            makePolygon(container, points, addClass + " city");
+        }
+        if (tile.edges[3] === "c") {
+            // Right 
+            var points = [
+                [xStartPix + tileLength, yStartPix],
+                [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
+                [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
+                [xStartPix + tileLength, yStartPix + tileLength]
             ];
 
             makePolygon(container, points, addClass + " city");
@@ -107,11 +106,10 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         paintTilePixelCoords(boardContainer, xPix, yPix, tile, PLACED_TILE_CLASS);
     }
 
-    function paintTilePixelCoords(container, x, y, tile, addClass) {
+    function paintTilePixelCoords(container, x, y, tile, addClass, onClick) {
         if (!addClass) addClass = "";
 
-        paintSquarePixelCoords(container, x, y, "tile " + addClass);
-
+        paintSquarePixelCoords(container, x, y, "tile " + addClass, onClick);
         paintTileDetails(container, x, y, tile, addClass);
 
         //if (tile !== undefined) {
@@ -133,8 +131,13 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
     }
 
     function paintNewTile (tile) {
+        var rotateAndPaint = function rotateAndPaint() {
+            currentUnplacedTile = tiles.rotateTile(currentUnplacedTile);
+            paintNewTile(currentUnplacedTile);
+        };
+
         resetNewTile();
-        paintTilePixelCoords(newTileContainer, 0, 0, tile, UNPLACED_TILE_CLASS);
+        paintTilePixelCoords(newTileContainer, 0, 0, tile, UNPLACED_TILE_CLASS, rotateAndPaint);
     }
 
     function resetNewTile() {
