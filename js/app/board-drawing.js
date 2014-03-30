@@ -161,17 +161,17 @@ define(['d3'], function (d3) {
     function paintCloister(container, tileStartX, tileStartY, addClass, onClick) {
         if (!addClass) addClass = "";
 
-        var edgeLength = gameSettings.tileLength * gameSettings.edgeSize;
-        var xPix = tileStartX + (gameSettings.tileLength / 2) - (edgeLength / 2);
-        var yPix = tileStartY + (gameSettings.tileLength / 2) - (edgeLength / 2);
+        var cloisterLength = gameSettings.tileLength * gameSettings.cloisterSize;
+        var xPix = tileStartX + (gameSettings.tileLength / 2) - (cloisterLength / 2);
+        var yPix = tileStartY + (gameSettings.tileLength / 2) - (cloisterLength / 2);
 
         // Draw box.
-        paintRectanglePixelCoords(container, xPix, yPix, edgeLength, edgeLength, addClass + " cloister", onClick);
+        paintRectanglePixelCoords(container, xPix, yPix, cloisterLength, cloisterLength, addClass + " cloister", onClick);
 
         var points = [
             [xPix, yPix],
-            [xPix + edgeLength, yPix],
-            [xPix + edgeLength / 2, yPix - edgeLength * 0.5]
+            [xPix + cloisterLength, yPix],
+            [xPix + cloisterLength / 2, yPix - cloisterLength * 0.5]
         ];
         // Draw roof.
         makePolygon(container, points, addClass + " cloister-roof", onClick);
