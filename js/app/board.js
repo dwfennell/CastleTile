@@ -85,6 +85,7 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
 
         // For now, just draw cities in triangles and roads to the center. 
         // Will need to get better than this later. Maybe change the encoding.
+        // TODO: Draw interior 'e' properly
 
         var halfTileLength = tileLength / 2;
 
@@ -117,9 +118,40 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
             paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass);
         }
 
-        // TODO: Draw interior 'e' properly
-        // TODO: Draw interior cities.
+        var centerPoint   = [xStartPix + halfTileLength, yStartPix + halfTileLength];
 
+        if (tile.interior[0] === "c") {
+            var points = [
+                centerPoint,
+                [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
+                [xStartPix + edgeLength, yStartPix + tileLength - edgeLength]
+            ];
+            makePolygon(container, points, addClass + " city");
+        }
+        if (tile.interior[1] === "c") {
+            var points = [
+                centerPoint,
+                [xStartPix + edgeLength, yStartPix + tileLength - edgeLength],
+                [xStartPix + edgeLength, yStartPix + edgeLength]
+            ];
+            makePolygon(container, points, addClass + " city");
+        }
+        if (tile.interior[2] === "c") {
+            var points = [
+                centerPoint,
+                [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
+                [xStartPix + edgeLength, yStartPix + edgeLength]
+            ];
+            makePolygon(container, points, addClass + " city");
+        }
+        if (tile.interior[3] === "c") {
+            var points = [
+                centerPoint,
+                [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
+                [xStartPix + tileLength - edgeLength, yStartPix + edgeLength]
+            ];
+            makePolygon(container, points, addClass + " city");
+        }
     }
 
     function makePolygon(container, points, addClass) {
@@ -290,7 +322,6 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         paintNewTile(currentUnplacedTile);
         highlightAvailableSpaces(placedTiles, currentUnplacedTile);
         isFirstTurn = false;
-
     };
 
     function updateTilesArray(tileArray, x, y, tile) {
