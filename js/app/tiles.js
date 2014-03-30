@@ -40,7 +40,6 @@ define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
     function pickTile() {
         d3.shuffle(pile);
         var tile = pile.pop();
-        console.log("Picked a tile! Edges:" + tile.edges + " , Interior: " + tile.interior + ". Tiles left: " + pile.length);
         return tile;
     }
     

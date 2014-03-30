@@ -1,260 +1,15 @@
 ﻿"use strict";
-define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, gameSettings, tileDefinitions, d3) {
-
-    // Drawing functions.
-    
-    function paintTileDetails(container, xStartPix, yStartPix, tile, addClass) {
-        if (!addClass) addClass = "";
-
-        var tileLength = gameSettings.tileLength;
-        var roadLength = gameSettings.roadSize * tileLength;
-        var edgeLength = gameSettings.edgeSize * tileLength;
-
-        // Draw roads.
-
-        var roadClass = addClass + " road";
-        if (tile.edges[0] === "r") {
-            // bottom
-            var xPix = xStartPix + (tileLength / 2) - (roadLength / 2);
-            var yPix = yStartPix + tileLength - edgeLength;
-            paintRectanglePixelCoords(container, xPix, yPix, roadLength, edgeLength, roadClass);
-        }
-        if (tile.edges[1] === "r") {
-            // left
-            var xPix = xStartPix;
-            var yPix = yStartPix + (tileLength / 2) - (roadLength / 2);
-            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass);
-        }
-        if (tile.edges[2] === "r") {
-            // top
-            var xPix = xStartPix + tileLength / 2 - roadLength / 2;
-            paintRectanglePixelCoords(container, xPix, yStartPix, roadLength, edgeLength, roadClass);
-        }
-        if (tile.edges[3] === "r") {
-            // right
-            var xPix = xStartPix + tileLength - edgeLength;
-            var yPix = yStartPix + (tileLength / 2) - (roadLength / 2);
-            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass);
-        }
-
-        // Draw cities.
-        if (tile.edges[0] === "c") {
-            // Bottom
-            var points = [
-                [xStartPix, yStartPix + tileLength],
-                [xStartPix + edgeLength, yStartPix + tileLength - edgeLength],
-                [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
-                [xStartPix + tileLength, yStartPix + tileLength]
-            ];
-
-            makePolygon(container, points, addClass + " city");
-        }
-        if (tile.edges[1] === "c") {
-            // Left
-            var points = [
-                [xStartPix, yStartPix],
-                [xStartPix + edgeLength, yStartPix + edgeLength],
-                [xStartPix + edgeLength, yStartPix + tileLength - edgeLength],
-                [xStartPix, yStartPix + tileLength]
-            ];
-
-            makePolygon(container, points, addClass + " city");
-        }
-        if (tile.edges[2] === "c") {
-            // Top
-            var points = [
-                [xStartPix, yStartPix],
-                [xStartPix + edgeLength, yStartPix + edgeLength],
-                [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
-                [xStartPix + tileLength, yStartPix]
-            ];
-
-            makePolygon(container, points, addClass + " city");
-        }
-        if (tile.edges[3] === "c") {
-            // Right 
-            var points = [
-                [xStartPix + tileLength, yStartPix],
-                [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
-                [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
-                [xStartPix + tileLength, yStartPix + tileLength]
-            ];
-
-            makePolygon(container, points, addClass + " city");
-        }
-
-        // For now, just draw cities in triangles and roads to the center. 
-        // Will need to get better than this later. Maybe change the encoding.
-        // TODO: Draw interior 'e' properly
-
-        var halfTileLength = tileLength / 2;
-
-        if (tile.interior[0] === "r" || tile.interior[0] === "e") {
-            // Bottom
-
-            var xPix = xStartPix + halfTileLength - (roadLength / 2);
-            var yPix = yStartPix + halfTileLength;
-            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass);
-        }
-        if (tile.interior[1] === "r" || tile.interior[1] === "e") {
-            // Left
-
-            var xPix = xStartPix + edgeLength;
-            var yPix = yStartPix + halfTileLength - roadLength / 2;
-            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass);
-        }
-        if (tile.interior[2] === "r" || tile.interior[2] === "e") {
-            // Top
-
-            var xPix = xStartPix + halfTileLength - (roadLength / 2);
-            var yPix = yStartPix + edgeLength;
-            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass);
-        }
-        if (tile.interior[3] === "r" || tile.interior[3] === "e") {
-            // Right
-            
-            var xPix = xStartPix + halfTileLength;
-            var yPix = yStartPix + halfTileLength - roadLength / 2;
-            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass);
-        }
-
-        var centerPoint   = [xStartPix + halfTileLength, yStartPix + halfTileLength];
-
-        if (tile.interior[0] === "c") {
-            var points = [
-                centerPoint,
-                [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
-                [xStartPix + edgeLength, yStartPix + tileLength - edgeLength]
-            ];
-            makePolygon(container, points, addClass + " city");
-        }
-        if (tile.interior[1] === "c") {
-            var points = [
-                centerPoint,
-                [xStartPix + edgeLength, yStartPix + tileLength - edgeLength],
-                [xStartPix + edgeLength, yStartPix + edgeLength]
-            ];
-            makePolygon(container, points, addClass + " city");
-        }
-        if (tile.interior[2] === "c") {
-            var points = [
-                centerPoint,
-                [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
-                [xStartPix + edgeLength, yStartPix + edgeLength]
-            ];
-            makePolygon(container, points, addClass + " city");
-        }
-        if (tile.interior[3] === "c") {
-            var points = [
-                centerPoint,
-                [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
-                [xStartPix + tileLength - edgeLength, yStartPix + edgeLength]
-            ];
-            makePolygon(container, points, addClass + " city");
-        }
-    }
-
-    function makePolygon(container, points, addClass) {
-        // Make a polygon.
-        if (!addClass) addClass = "";
-
-        var line = d3.svg.line()
-            .x(function (d, i) { return d[0]; })
-            .y(function (d, i) { return d[1]; });
-
-        container.append("svg:path")
-            .attr("d", line(points))
-            .attr("class", addClass);
-    }
-
-
-    function paintTile (x, y, tile) {
-        var xPix = x * gameSettings.tileLength;
-        var yPix = y * gameSettings.tileLength;
-        paintTilePixelCoords(boardContainer, xPix, yPix, tile, PLACED_TILE_CLASS);
-    }
-
-    function paintTilePixelCoords(container, x, y, tile, addClass, onClick) {
-        if (!addClass) addClass = "";
-
-        paintSquarePixelCoords(container, x, y, "tile " + addClass, onClick);
-        paintTileDetails(container, x, y, tile, addClass);
-
-        //if (tile !== undefined) {
-        //    container.append("text")
-        //        .attr("x", x)
-        //        .attr("y", y)
-        //        .attr("dy", ".85em")
-        //        .attr("dx", ".1em")
-        //        .attr("class", addClass)
-        //        .text("e: " + tile.edges);
-        //    container.append("text")
-        //        .attr("x", x)
-        //        .attr("y", y)
-        //        .attr("dy", "1.85em")
-        //        .attr("dx", ".1em")
-        //        .attr("class", addClass)
-        //        .text("i: " + tile.interior);
-        //}
-    }
-
-    function paintNewTile (tile) {
-        var rotateAndPaint = function rotateAndPaint() {
-            currentUnplacedTile = tiles.rotateTile(currentUnplacedTile);
-            paintNewTile(currentUnplacedTile);
-        };
-
-        resetNewTile();
-        paintTilePixelCoords(newTileContainer, 0, 0, tile, UNPLACED_TILE_CLASS, rotateAndPaint);
-    }
-
-    function resetNewTile() {
-        d3.selectAll("." + UNPLACED_TILE_CLASS).remove();
-    }
-
-    function paintRectanglePixelCoords(container, x, y, width, height, addClass, onClick) {
-        if (!addClass) addClass = "";
-
-        // Class to uniquely idenify this box.
-        var idClass = "sqr-id" + squareId++;
-        addClass += " " + idClass;
-
-        container.append("svg:rect")
-            .attr("x", x)
-            .attr("y", y)
-            .attr("height", height)
-            .attr("width", width)
-            .attr("class", addClass);
-
-        // Add onClick callback.
-        if (onClick) {
-            d3.selectAll("." + idClass).on("click", onClick);
-        }
-    }
-
-    function paintSquare(container, x, y, addClass, onClick) {
-        paintSquarePixelCoords(container, x * gameSettings.tileLength, y * gameSettings.tileLength, addClass, onClick);
-    }
-
-    function paintSquarePixelCoords(container, x, y, addClass, onClick) {
-        paintRectanglePixelCoords(container, x, y, gameSettings.tileLength, gameSettings.tileLength, addClass, onClick);
-    }
-
-    function clearBoard() {
-        d3.selectAll("." + PLACED_TILE_CLASS).remove();
-        d3.selectAll("." + AVAILABLE_SPACE_CLASS).remove();
-    }
-    
+define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3'], function (tiles, boardDraw, gameSettings, tileDefinitions, d3) {
 
     // Game logic functions.
 
     function selectSpace() {
         if (currentUnplacedTile) {
             placeTile(x, y, currentUnplacedTile);
-            resetNewTile();
+            boardDraw.resetNewTile();
             currentUnplacedTile = null;
 
-            d3.selectAll("." + AVAILABLE_SPACE_CLASS).remove();
+            boardDraw.clearAvailableSpaceHighlights();
         }
     }
 
@@ -262,14 +17,13 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         var selectSpaceCallback = function selectSpaceCallback() {
             if (currentUnplacedTile) {
                 placeTile(x, y, currentUnplacedTile);
-                resetNewTile();
+                boardDraw.resetNewTile();
                 currentUnplacedTile = null;
-
-                d3.selectAll("." + AVAILABLE_SPACE_CLASS).remove();
+                boardDraw.clearAvailableSpaceHighlights();
             }
         }
         
-        paintSquare(boardContainer, x, y, AVAILABLE_SPACE_CLASS, selectSpaceCallback);
+        boardDraw.paintSquare(x, y, gameSettings.availableSpaceIdentifier, selectSpaceCallback);
     }
 
     function highlightAvailableSpaces(tileArray, tile) {
@@ -319,7 +73,14 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         }
 
         currentUnplacedTile = isFirstTurn ? tiles.startingTile : tiles.pickTile();
-        paintNewTile(currentUnplacedTile);
+
+        var rotateAndPaint = function rotateAndPaint() {
+            currentUnplacedTile = tiles.rotateTile(currentUnplacedTile);
+            boardDraw.paintNewTile(currentUnplacedTile, rotateAndPaint);
+        };
+
+        boardDraw.paintNewTile(currentUnplacedTile, rotateAndPaint);
+
         highlightAvailableSpaces(placedTiles, currentUnplacedTile);
         isFirstTurn = false;
     };
@@ -354,7 +115,6 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
 
         // If any space in the last row is non-empty add a new bottom row that is empty.
         var lastRowIndex = tileArray.length - 1;
-        console.log("lastrowindex:" + lastRowIndex);
         for (var i = 0; i < tileArray[lastRowIndex].length; i++) {
             if (tileArray[lastRowIndex][i] !== null) {
                 isLastRowEmpty = false;
@@ -394,54 +154,22 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         }
     }
 
-    // REWRITE WITH BETTER D3.
-    function redrawBoard(placedTiles) {
-        clearBoard();
-        
-        for (var i = 0; i < placedTiles.length; i++) {
-            for (var j = 0; j < placedTiles[i].length; j++) {
-                if (placedTiles[i][j] != null) {
-                    paintTile(i, j, placedTiles[i][j]);
-                }
-            }
-        }
-    }
-
     function placeTile(x, y, tile) {
         updateTilesArray(placedTiles, x, y, tile);
-        redrawBoard(placedTiles);
+        boardDraw.redrawBoard(placedTiles);
     }
     
     function init() {
         isFirstTurn = true;
 
-        d3.select("#" + NEW_TILE_BUTTON_ID)
+        boardDraw.init(gameSettings);
+
+        d3.select("#" + gameSettings.newTileButtonIdentifier)
             .on('click', getNewTile)
-
-        boardContainer = d3.select("#" + BOARD_ID)
-            .append("svg:svg")
-            .attr("width", gameSettings.boardWidth)
-            .attr("height", gameSettings.boardHeight);
-
-        newTileContainer = d3.select("#" + NEW_TILE_AREA_ID)
-            .append("svg:svg")
-            .attr("width", gameSettings.tileLength)
-            .attr("height", gameSettings.tileLength);
     }
-
-    var NEW_TILE_AREA_ID = "new-tile-entry";
-    var NEW_TILE_BUTTON_ID = "new-tile-button";
-    var BOARD_ID = "board";
-    var AVAILABLE_SPACE_CLASS = "can-place";
-    var UNPLACED_TILE_CLASS = "unplaced-tile";
-    var PLACED_TILE_CLASS = "placed-tile";
 
     var isFirstTurn;
     var currentUnplacedTile;
-    var boardContainer;
-    var newTileContainer;
-
-    var squareId = 1;
     var placedTiles = [
         [null]
     ];
