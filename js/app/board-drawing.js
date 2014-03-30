@@ -2,7 +2,7 @@
 define(['d3'], function (d3) {
 
     // Drawing functions.
-    function paintTileDetails(container, xStartPix, yStartPix, tile, addClass) {
+    function paintTileDetails(container, xStartPix, yStartPix, tile, addClass, onClick) {
         if (!addClass) addClass = "";
 
         var tileLength = gameSettings.tileLength;
@@ -16,24 +16,24 @@ define(['d3'], function (d3) {
             // bottom
             var xPix = xStartPix + (tileLength / 2) - (roadLength / 2);
             var yPix = yStartPix + tileLength - edgeLength;
-            paintRectanglePixelCoords(container, xPix, yPix, roadLength, edgeLength, roadClass);
+            paintRectanglePixelCoords(container, xPix, yPix, roadLength, edgeLength, roadClass, onClick);
         }
         if (tile.edges[1] === "r") {
             // left
             var xPix = xStartPix;
             var yPix = yStartPix + (tileLength / 2) - (roadLength / 2);
-            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass);
+            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass, onClick);
         }
         if (tile.edges[2] === "r") {
             // top
             var xPix = xStartPix + tileLength / 2 - roadLength / 2;
-            paintRectanglePixelCoords(container, xPix, yStartPix, roadLength, edgeLength, roadClass);
+            paintRectanglePixelCoords(container, xPix, yStartPix, roadLength, edgeLength, roadClass, onClick);
         }
         if (tile.edges[3] === "r") {
             // right
             var xPix = xStartPix + tileLength - edgeLength;
             var yPix = yStartPix + (tileLength / 2) - (roadLength / 2);
-            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass);
+            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass, onClick);
         }
 
         // Draw cities.
@@ -46,7 +46,7 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength, yStartPix + tileLength]
             ];
 
-            makePolygon(container, points, addClass + " city");
+            makePolygon(container, points, addClass + " city", onClick);
         }
         if (tile.edges[1] === "c") {
             // Left
@@ -57,7 +57,7 @@ define(['d3'], function (d3) {
                 [xStartPix, yStartPix + tileLength]
             ];
 
-            makePolygon(container, points, addClass + " city");
+            makePolygon(container, points, addClass + " city", onClick);
         }
         if (tile.edges[2] === "c") {
             // Top
@@ -68,7 +68,7 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength, yStartPix]
             ];
 
-            makePolygon(container, points, addClass + " city");
+            makePolygon(container, points, addClass + " city", onClick);
         }
         if (tile.edges[3] === "c") {
             // Right 
@@ -79,7 +79,7 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength, yStartPix + tileLength]
             ];
 
-            makePolygon(container, points, addClass + " city");
+            makePolygon(container, points, addClass + " city", onClick);
         }
 
         // For now, just draw cities in triangles and roads to the center. 
@@ -93,28 +93,28 @@ define(['d3'], function (d3) {
 
             var xPix = xStartPix + halfTileLength - (roadLength / 2);
             var yPix = yStartPix + halfTileLength;
-            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass);
+            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass, onClick);
         }
         if (tile.interior[1] === "r" || tile.interior[1] === "e") {
             // Left
 
             var xPix = xStartPix + edgeLength;
             var yPix = yStartPix + halfTileLength - roadLength / 2;
-            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass);
+            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass, onClick);
         }
         if (tile.interior[2] === "r" || tile.interior[2] === "e") {
             // Top
 
             var xPix = xStartPix + halfTileLength - (roadLength / 2);
             var yPix = yStartPix + edgeLength;
-            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass);
+            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass, onClick);
         }
         if (tile.interior[3] === "r" || tile.interior[3] === "e") {
             // Right
 
             var xPix = xStartPix + halfTileLength;
             var yPix = yStartPix + halfTileLength - roadLength / 2;
-            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass);
+            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass, onClick);
         }
 
         var centerPoint = [xStartPix + halfTileLength, yStartPix + halfTileLength];
@@ -125,7 +125,7 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
                 [xStartPix + edgeLength, yStartPix + tileLength - edgeLength]
             ];
-            makePolygon(container, points, addClass + " city");
+            makePolygon(container, points, addClass + " city", onClick);
         }
         if (tile.interior[1] === "c") {
             var points = [
@@ -133,7 +133,7 @@ define(['d3'], function (d3) {
                 [xStartPix + edgeLength, yStartPix + tileLength - edgeLength],
                 [xStartPix + edgeLength, yStartPix + edgeLength]
             ];
-            makePolygon(container, points, addClass + " city");
+            makePolygon(container, points, addClass + " city", onClick);
         }
         if (tile.interior[2] === "c") {
             var points = [
@@ -141,7 +141,7 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
                 [xStartPix + edgeLength, yStartPix + edgeLength]
             ];
-            makePolygon(container, points, addClass + " city");
+            makePolygon(container, points, addClass + " city", onClick);
         }
         if (tile.interior[3] === "c") {
             var points = [
@@ -149,13 +149,16 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
                 [xStartPix + tileLength - edgeLength, yStartPix + edgeLength]
             ];
-            makePolygon(container, points, addClass + " city");
+            makePolygon(container, points, addClass + " city", onClick);
         }
     }
 
-    function makePolygon(container, points, addClass) {
+    function makePolygon(container, points, addClass, onClick) {
         // Make a polygon.
         if (!addClass) addClass = "";
+
+        var idClass = "sqr-id" + squareId++;
+        addClass += " " + idClass;
 
         var line = d3.svg.line()
             .x(function (d, i) { return d[0]; })
@@ -164,6 +167,11 @@ define(['d3'], function (d3) {
         container.append("svg:path")
             .attr("d", line(points))
             .attr("class", addClass);
+
+         //Add onClick callback.
+        if (onClick) {
+            d3.selectAll("." + idClass).on("click", onClick);
+        }
     }
 
     function paintTile(x, y, tile) {
@@ -176,7 +184,7 @@ define(['d3'], function (d3) {
         if (!addClass) addClass = "";
 
         paintSquarePixelCoords(container, x, y, "tile " + addClass, onClick);
-        paintTileDetails(container, x, y, tile, addClass);
+        paintTileDetails(container, x, y, tile, addClass, onClick);
     }
 
     function paintNewTile(tile, rotateCallback) {
