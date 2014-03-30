@@ -17,7 +17,8 @@ define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
                 edges: input.edges,
                 interior: input.interior,
                 isStartingTile: input.isStartingTile,
-                hasShield: input.shield
+                hasShield: input.shield,
+                hasCloister: input.cloister
             };
         }
 

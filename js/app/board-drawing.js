@@ -84,41 +84,39 @@ define(['d3'], function (d3) {
 
         // For now, just draw cities in triangles and roads to the center. 
         // Will need to get better than this later. Maybe change the encoding.
+
         // TODO: Draw interior 'e' properly
+        // TODO: Sheilds.
 
+        // Draw interior roads.
         var halfTileLength = tileLength / 2;
-
         if (tile.interior[0] === "r" || tile.interior[0] === "e") {
             // Bottom
-
             var xPix = xStartPix + halfTileLength - (roadLength / 2);
             var yPix = yStartPix + halfTileLength;
             paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass, onClick);
         }
         if (tile.interior[1] === "r" || tile.interior[1] === "e") {
             // Left
-
             var xPix = xStartPix + edgeLength;
             var yPix = yStartPix + halfTileLength - roadLength / 2;
             paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass, onClick);
         }
         if (tile.interior[2] === "r" || tile.interior[2] === "e") {
             // Top
-
             var xPix = xStartPix + halfTileLength - (roadLength / 2);
             var yPix = yStartPix + edgeLength;
             paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass, onClick);
         }
         if (tile.interior[3] === "r" || tile.interior[3] === "e") {
             // Right
-
             var xPix = xStartPix + halfTileLength;
             var yPix = yStartPix + halfTileLength - roadLength / 2;
             paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass, onClick);
         }
 
+        // Draw interior cities.
         var centerPoint = [xStartPix + halfTileLength, yStartPix + halfTileLength];
-
         if (tile.interior[0] === "c") {
             var points = [
                 centerPoint,
@@ -151,10 +149,35 @@ define(['d3'], function (d3) {
             ];
             makePolygon(container, points, addClass + " city", onClick);
         }
+
+        if (tile.hasCloister) {
+            paintCloister(container, xStartPix, yStartPix, addClass + " cloister", onClick);
+        }
+        //if (tile.hasShield) {
+        //    drawSheild();
+        //}
+    }
+
+    function paintCloister(container, tileStartX, tileStartY, addClass, onClick) {
+        if (!addClass) addClass = "";
+
+        var edgeLength = gameSettings.tileLength * gameSettings.edgeSize;
+        var xPix = tileStartX + (gameSettings.tileLength / 2) - (edgeLength / 2);
+        var yPix = tileStartY + (gameSettings.tileLength / 2) - (edgeLength / 2);
+
+        // Draw box.
+        paintRectanglePixelCoords(container, xPix, yPix, edgeLength, edgeLength, addClass + " cloister", onClick);
+
+        var points = [
+            [xPix, yPix],
+            [xPix + edgeLength, yPix],
+            [xPix + edgeLength / 2, yPix - edgeLength * 0.5]
+        ];
+        // Draw roof.
+        makePolygon(container, points, addClass + " cloister-roof", onClick);
     }
 
     function makePolygon(container, points, addClass, onClick) {
-        // Make a polygon.
         if (!addClass) addClass = "";
 
         var idClass = "sqr-id" + squareId++;
