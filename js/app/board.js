@@ -83,7 +83,43 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
             makePolygon(container, points, addClass + " city");
         }
 
-        // TODO: Draw tile interiors.
+        // For now, just draw cities in triangles and roads to the center. 
+        // Will need to get better than this later. Maybe change the encoding.
+
+        var halfTileLength = tileLength / 2;
+
+        if (tile.interior[0] === "r" || tile.interior[0] === "e") {
+            // Bottom
+
+            var xPix = xStartPix + halfTileLength - (roadLength / 2);
+            var yPix = yStartPix + halfTileLength;
+            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass);
+        }
+        if (tile.interior[1] === "r" || tile.interior[1] === "e") {
+            // Left
+
+            var xPix = xStartPix + edgeLength;
+            var yPix = yStartPix + halfTileLength - roadLength / 2;
+            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass);
+        }
+        if (tile.interior[2] === "r" || tile.interior[2] === "e") {
+            // Top
+
+            var xPix = xStartPix + halfTileLength - (roadLength / 2);
+            var yPix = yStartPix + edgeLength;
+            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass);
+        }
+        if (tile.interior[3] === "r" || tile.interior[3] === "e") {
+            // Right
+            
+            var xPix = xStartPix + halfTileLength;
+            var yPix = yStartPix + halfTileLength - roadLength / 2;
+            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass);
+        }
+
+        // TODO: Draw interior 'e' properly
+        // TODO: Draw interior cities.
+
     }
 
     function makePolygon(container, points, addClass) {
@@ -254,6 +290,7 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         paintNewTile(currentUnplacedTile);
         highlightAvailableSpaces(placedTiles, currentUnplacedTile);
         isFirstTurn = false;
+
     };
 
     function updateTilesArray(tileArray, x, y, tile) {
