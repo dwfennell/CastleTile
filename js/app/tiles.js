@@ -51,8 +51,8 @@ define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
         var e = tile.edges;
         var i = tile.interior;
 
-        tile.edges = [e[1], e[2], e[3], e[0]].join("");
-        tile.interior = [i[1], i[2], i[3], i[0]].join("");
+        tile.edges = [e[3], e[0], e[1], e[2]].join("");
+        tile.interior = [i[3], i[0], i[1], i[2]].join("");
 
         return tile;
     }
