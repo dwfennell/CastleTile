@@ -81,82 +81,13 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
 
         boardDraw.paintNewTile(currentUnplacedTile, rotateAndPaint);
 
-        highlightAvailableSpaces(placedTiles, currentUnplacedTile);
+        highlightAvailableSpaces(tiles.placedTiles, currentUnplacedTile);
         isFirstTurn = false;
     };
 
-    function updateTilesArray(tileArray, x, y, tile) {
-        function makeBlankRow() {
-            if (tileArray && tileArray[0]) {
-                var array = [];
-                for (var i = 0; i < tileArray[0].length; i++) {
-                    array[i] = null;
-                }
-                return array;
-            } else {
-                return [];
-            }
-        }
-
-        tileArray[x][y] = tile;
-
-        var isFirstRowEmpty = true;
-        var isLastRowEmpty = true;
-        var isFirstColEmpty = true;
-        var isLastColEmpty = true;
-
-        // If any space in the top row is non-empty add a new top row that is empty.
-        for (var i = 0; i < tileArray[0].length; i++) {
-            if (tileArray[0][i] !== null) {
-                isFirstRowEmpty = false;
-                break;
-            }
-        }
-
-        // If any space in the last row is non-empty add a new bottom row that is empty.
-        var lastRowIndex = tileArray.length - 1;
-        for (var i = 0; i < tileArray[lastRowIndex].length; i++) {
-            if (tileArray[lastRowIndex][i] !== null) {
-                isLastRowEmpty = false;
-                break;
-            }
-        }
-
-        // If any space in the first or last columns are non-empty add a new respective empty columns.
-        var lastColumnIndex = tileArray[0].length - 1
-        for (var i = 0; i < tileArray.length; i++) {
-            if (isFirstColEmpty && tileArray[i][0] !== null) {
-                isFirstColEmpty = false;
-            }
-            if (isLastColEmpty && tileArray[i][lastColumnIndex] !== null) {
-                isLastColEmpty = false;
-            }
-        }
-        
-        if (!isFirstColEmpty) {
-            tileArray.forEach(function (entry) {
-                entry.splice(0, 0, null);
-            });
-        }
-
-        if (!isLastColEmpty) {
-            tileArray.forEach(function (entry) {
-                entry.push(null);
-            });
-        }
-
-        if (!isFirstRowEmpty) {
-            tileArray.splice(0, 0, makeBlankRow());
-        }
-
-        if (!isLastRowEmpty) {
-            tileArray.push(makeBlankRow());
-        }
-    }
-
     function placeTile(x, y, tile) {
-        updateTilesArray(placedTiles, x, y, tile);
-        boardDraw.redrawBoard(placedTiles);
+        tiles.updateTilesArray(tiles.placedTiles, x, y, tile);
+        boardDraw.redrawBoard(tiles.placedTiles);
     }
     
     function init() {
@@ -170,9 +101,6 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
 
     var isFirstTurn;
     var currentUnplacedTile;
-    var placedTiles = [
-        [null]
-    ];
 
     return {
         init: init
