@@ -37,7 +37,7 @@ define({
               "num": "3",
               "isStartingTile": false,
               "edges": "rccr",
-              "interior": "ccrr",
+              "interior": "rccr",
               "shield": false
           },
           {
