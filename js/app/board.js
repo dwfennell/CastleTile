@@ -50,6 +50,7 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
     function getNewTile() {
         if (!tiles.isMoreTiles()) {
             alert("No tiles left!");
+            return;
         }
 
         currentUnplacedTile = isFirstTurn ? tiles.startingTile : tiles.pickTile();
