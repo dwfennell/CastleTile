@@ -1,15 +1,12 @@
 ﻿"use strict";
 define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3'], function (tiles, boardDraw, gameSettings, tileDefinitions, d3) {
-
-    // Game logic functions.
-
     function selectSpace() {
         if (currentUnplacedTile) {
             placeTile(x, y, currentUnplacedTile);
             boardDraw.resetNewTile();
             currentUnplacedTile = null;
 
-            boardDraw.clearAvailableSpaceHighlights();
+            boardDraw.clearAvailableSpaces();
         }
     }
 
@@ -19,52 +16,35 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
                 placeTile(x, y, currentUnplacedTile);
                 boardDraw.resetNewTile();
                 currentUnplacedTile = null;
-                boardDraw.clearAvailableSpaceHighlights();
+                boardDraw.clearAvailableSpaces();
             }
         }
-        
-        boardDraw.paintSquare(x, y, gameSettings.availableSpaceIdentifier, selectSpaceCallback);
+
+        boardDraw.paintAvailableSpace(x, y, selectSpaceCallback);
     }
 
-    function highlightAvailableSpaces(tileArray, tile) {
-        if (!tileArray) return;
+    function highlightAvailableSpaces(tile) {
+        if (!tiles.placedTiles) return;
 
-        for (var i = 0; i < tileArray.length; i++) {
-            for (var j = 0; j < tileArray[i].length; j++) {
-                if (canPlaceTile(tileArray, i, j)) {
-                    setAvailableSpace(i, j);
+        for (var i = 0; i < tiles.placedTiles.length; i++) {
+            for (var j = 0; j < tiles.placedTiles[i].length; j++) {
+                var x = i,
+                    y = j;
+
+                var selectSpaceCallback = function selectSpaceCallback() {
+                    if (currentUnplacedTile) {
+                        placeTile(x, y, currentUnplacedTile);
+                        boardDraw.resetNewTile();
+                        currentUnplacedTile = null;
+                        boardDraw.clearAvailableSpaces();
+                    }
+                }
+
+                if (tiles.isSpaceAvailable(tile, i, j)) {
+                    setAvailableSpace(i, j, selectSpaceCallback);
                 }
             }
         }
-    }
-
-    function canPlaceTile(tileArray, x, y) {
-        var tile = tileArray[x][y];
-
-        if (tile !== null) {
-            // Coordinates occupied.
-            return false;
-        }
-
-        if (tileArray.length === 1 && tileArray[x].length === 1) {
-            // First turn.
-            return true;
-        }
-
-        // Are we connected to any tile at all? 
-        var isTouchingATile = false;
-        if (x > 0 && tileArray[x - 1][y] !== null) {
-            isTouchingATile = true;
-        } else if (x < tileArray.length - 1 && tileArray[x + 1][y] !== null) {
-            isTouchingATile = true;
-        } else if (y > 0 && tileArray[x][y - 1] !== null) {
-            isTouchingATile = true;
-        } else if (y < tileArray[x].length - 1 && tileArray[x][y + 1] !== null) {
-            isTouchingATile = true;
-        }
-
-        // More here later. Need to check tile compatability.
-        return isTouchingATile;
     }
 
     function getNewTile() {
@@ -77,11 +57,13 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
         var rotateAndPaint = function rotateAndPaint() {
             currentUnplacedTile = tiles.rotateTile(currentUnplacedTile);
             boardDraw.paintNewTile(currentUnplacedTile, rotateAndPaint);
+            boardDraw.clearAvailableSpaces();
+            highlightAvailableSpaces(currentUnplacedTile);
         };
 
         boardDraw.paintNewTile(currentUnplacedTile, rotateAndPaint);
 
-        highlightAvailableSpaces(tiles.placedTiles, currentUnplacedTile);
+        highlightAvailableSpaces(currentUnplacedTile);
         isFirstTurn = false;
     };
 

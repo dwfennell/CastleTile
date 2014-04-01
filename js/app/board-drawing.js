@@ -219,8 +219,12 @@ define(['d3'], function (d3) {
         d3.selectAll("." + UNPLACED_TILE_CLASS).remove();
     }
 
-    function clearAvailableSpaceHighlights() {
-        d3.selectAll("." + gameSettings.availableSpaceIdentifier).remove();
+    function paintAvailableSpace(x, y, selectSpaceCallback) {
+        paintSquare(boardContainer, x, y, AVAILABLE_SPACE_CLASS, selectSpaceCallback);
+    }
+
+    function clearAvailableSpaces() {
+        d3.selectAll("." + AVAILABLE_SPACE_CLASS).remove();
     }
 
     function paintRectanglePixelCoords(container, x, y, width, height, addClass, onClick) {
@@ -295,6 +299,7 @@ define(['d3'], function (d3) {
 
     var NEW_TILE_AREA_ID = "new-tile-entry";
     var BOARD_ID = "board";
+    var AVAILABLE_SPACE_CLASS = "can-place";
     var UNPLACED_TILE_CLASS = "unplaced-tile";
     var PLACED_TILE_CLASS = "placed-tile";
 
@@ -302,10 +307,10 @@ define(['d3'], function (d3) {
         init: init,
         paintTile: paintTile,
         resetNewTile: resetNewTile,
-        paintSquare: paintSquareBoard,
         paintNewTile: paintNewTile,
         clearBoard: clearBoard,
         redrawBoard: redrawBoard,
-        clearAvailableSpaceHighlights: clearAvailableSpaceHighlights
+        paintAvailableSpace: paintAvailableSpace,
+        clearAvailableSpaces: clearAvailableSpaces
     };
 });
