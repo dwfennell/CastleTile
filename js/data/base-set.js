@@ -6,6 +6,7 @@ define({
               "isStartingTile": false,
               "edges": "gccc",
               "interior": "gccc",
+              "cloister": false,
               "shield": false
           },
           {
@@ -14,6 +15,7 @@ define({
               "isStartingTile": false,
               "edges": "gccg",
               "interior": "gccg",
+              "cloister": false,
               "shield": false
           },
           {
@@ -22,6 +24,7 @@ define({
               "isStartingTile": false,
               "edges": "gcgc",
               "interior": "gcgc",
+              "cloister": false,
               "shield": false
           },
           {
@@ -30,6 +33,7 @@ define({
               "isStartingTile": false,
               "edges": "rccc",
               "interior": "eccc",
+              "cloister": false,
               "shield": false
           },
           {
@@ -37,7 +41,8 @@ define({
               "num": "3",
               "isStartingTile": false,
               "edges": "rccr",
-              "interior": "ccrr",
+              "interior": "rccr",
+              "cloister": false,
               "shield": false
           },
           {
@@ -46,6 +51,8 @@ define({
               "isStartingTile": false,
               "edges": "rccc",
               "interior": "eccc",
+              "cloister": false,
+              "sheild": true
           },
           {
               "filepath": "city_grass_road_shield_2.png",
@@ -53,6 +60,7 @@ define({
               "isStartingTile": false,
               "edges": "rccr",
               "interior": "rccr",
+              "cloister": false,
               "shield": true
           },
           {
@@ -61,6 +69,7 @@ define({
               "isStartingTile": false,
               "edges": "gccc",
               "interior": "gccc",
+              "cloister": false,
              "shield": true
           },
           {
@@ -69,6 +78,7 @@ define({
               "isStartingTile": false,
               "edges": "gcgc",
               "interior": "gcgc",
+              "cloister": false,
              "shield": true
           },
           {
@@ -77,6 +87,7 @@ define({
               "isStartingTile": false,
               "edges": "gccg",
               "interior": "gccg",
+              "cloister": false,
              "shield": true
           },
           {
@@ -85,7 +96,8 @@ define({
               "isStartingTile": false,
               "edges": "cccc",
               "interior": "cccc",
-             "shield": true
+              "cloister": false,
+              "shield": true
           },
           {
               "filepath": "cloister.png",
@@ -93,6 +105,7 @@ define({
               "isStartingTile": false,
               "edges": "gggg",
               "interior": "gggg",
+              "cloister": true,
               "shield": false
           },
           {
@@ -101,6 +114,7 @@ define({
               "isStartingTile": false,
               "edges": "rggg",
               "interior": "eggg",
+              "cloister": true,
               "shield": false
           },
           {
@@ -109,6 +123,7 @@ define({
               "isStartingTile": false,
               "edges": "gccg",
               "interior": "gggg",
+              "cloister": false,
               "shield": false
           },
           {
@@ -117,6 +132,7 @@ define({
               "isStartingTile": false,
               "edges": "cgcg",
               "interior": "gggg",
+              "cloister": false,
               "shield": false
           },
           {
@@ -125,6 +141,7 @@ define({
               "isStartingTile": false,
               "edges": "ggcg",
               "interior": "gggg",
+              "cloister": false,
               "shield": false
           },
           {
@@ -133,6 +150,7 @@ define({
               "isStartingTile": false,
               "edges": "rrcg",
               "interior": "rrgg",
+              "cloister": false,
               "shield": false
           },
           {
@@ -141,6 +159,7 @@ define({
               "isStartingTile": false,
               "edges": "rgcr",
               "interior": "rggr",
+              "cloister": false,
               "shield": false
           },
           {
@@ -149,6 +168,7 @@ define({
               "isStartingTile": false,
               "edges": "rrcr",
               "interior": "eege",
+              "cloister": false,
               "shield": false
           },
           {
@@ -157,6 +177,7 @@ define({
               "isStartingTile": true,
               "edges": "grcr",
               "interior": "grgr",
+              "cloister": false,
               "shield": false
           },
           {
@@ -165,6 +186,7 @@ define({
               "isStartingTile": false,
               "edges": "rgrg",
               "interior": "rgrg",
+              "cloister": false,
               "shield": false
           },
           {
@@ -173,6 +195,7 @@ define({
               "isStartingTile": false,
               "edges": "rrgg",
               "interior": "rrgg",
+              "cloister": false,
               "shield": false
           },
           {
@@ -181,6 +204,7 @@ define({
               "isStartingTile": false,
               "edges": "rrgr",
               "interior": "eege",
+              "cloister": false,
               "shield": false
           },
           {
@@ -189,6 +213,7 @@ define({
               "isStartingTile": false,
               "edges": "rrrr",
               "interior": "eeee",
+              "cloister": false,
               "shield": false
           }
     ]

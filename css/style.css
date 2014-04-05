@@ -3,7 +3,7 @@
 }
 
 .can-place {
-  fill: goldenrod
+  fill: lightblue
 }
 
 .road {
@@ -12,6 +12,14 @@
 
 .city {
   fill: gold
+}
+
+.cloister {
+  fill: tan
+}
+
+.cloister-roof {
+  fill: indianred
 }
 
 /*#board {
