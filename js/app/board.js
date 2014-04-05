@@ -194,6 +194,41 @@ define(['app/tiles', 'app/settings', 'data/base-set', 'd3'], function (tiles, ga
         highlightAvailableSpaces(placedTiles, currentUnplacedTile);
     };
 
+    function isRoadClosed(x, y, edgeIndex) {
+        //isClosed = 
+
+        // isCLosedArray ... is a parallel array for road ended flags, when an 
+        // end road is connected it flips the road it touches to "e=true", 
+        // contuning to flip until it comes to an intersection. 
+        // If the flipping stops without reaching an intersection, then isRoadClosed is TRUE . 
+
+    }
+
+    function isCityClosed(x, y, interiorIndex) {
+        
+        // city flips adacent city tiles's "city segment closed" flag to true. 
+        // like roads, it keeps flipping until it finds an intersection. 
+
+    }
+
+    function scoreRoad(x, y, edgeIndex) {
+
+    }
+
+    function scoreCity(x, y, interiorIndex) {
+
+    }
+
+    function checkFeaturesComplete(tileArray, tile, newTileX, newTileY) {
+        for (var i = 0; i < 4; i++) {
+            if (tile.edges[i] === "e" && isRoadClosed(x, y, i)) {
+                scoreRoad(x, y, i);
+            } else if (tile.edges[i] == "c" && isCityClosed(x, y, i) {
+                scoreCity(x, y, i);
+            }
+        }
+    }
+
     function updateTilesArray(tileArray, x, y, tile) {
         function makeBlankRow() {
             if (tileArray && tileArray[0]) {
