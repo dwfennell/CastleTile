@@ -83,14 +83,14 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
         for (var i = 0; i < 4; i++) {
             if (tile.edges[i] === "e" && isRoadClosed(x, y, i)) {
                 scoreRoad(x, y, i);
-            } else if (tile.edges[i] == "c" && isCityClosed(x, y, i) {
+            } else if (tile.edges[i] == "c" && isCityClosed(x, y, i)) {
                 scoreCity(x, y, i);
             }
         }
     }
 
 
-        var rotateAndPaint = function rotateAndPaint() {
+    var rotateAndPaint = function rotateAndPaint() {
             currentUnplacedTile = tiles.rotateTile(currentUnplacedTile);
             boardDraw.paintNewTile(currentUnplacedTile, rotateAndPaint);
             boardDraw.clearAvailableSpaces();
