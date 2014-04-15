@@ -1,42 +1,83 @@
 "use strict";
 define(['d3'], function (d3) {
 
-    // Drawing functions.
+    function drawFollower(tile, index, isInterior, isCloister) {
+        debugger;
+    }
+
     function paintTileDetails(container, xStartPix, yStartPix, tile, addClass, onClick) {
         if (!addClass) addClass = "";
 
+        // Place follower click handlers. 
+        // OnClick is passed down from the controller class; handles business logic. 
+        function makeDetailClick(onClick, index, isInterior, isCloister) {
+            return function () {
+                debugger;
+                drawFollower(tile, index, isInterior, isCloister);
+                onClick(index, isInterior, isCloister);
+            }
+        }
+
         var tileLength = gameSettings.tileLength;
+        var halfTileLength = tileLength / 2;
         var roadLength = gameSettings.roadSize * tileLength;
         var edgeLength = gameSettings.edgeSize * tileLength;
+        var centerPoint = [xStartPix + halfTileLength, yStartPix + halfTileLength];
 
         // Draw roads.
-
         var roadClass = addClass + " road";
         if (tile.edges[0] === "r") {
             // bottom
             var xPix = xStartPix + (tileLength / 2) - (roadLength / 2);
             var yPix = yStartPix + tileLength - edgeLength;
-            paintRectanglePixelCoords(container, xPix, yPix, roadLength, edgeLength, roadClass, onClick);
+            paintRectanglePixelCoords(container, xPix, yPix, roadLength, edgeLength, roadClass, makeDetailClick(onClick, 0, false));
         }
         if (tile.edges[1] === "r") {
             // left
             var xPix = xStartPix;
             var yPix = yStartPix + (tileLength / 2) - (roadLength / 2);
-            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass, onClick);
+            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass, makeDetailClick(onClick, 1, false));
         }
         if (tile.edges[2] === "r") {
             // top
             var xPix = xStartPix + tileLength / 2 - roadLength / 2;
-            paintRectanglePixelCoords(container, xPix, yStartPix, roadLength, edgeLength, roadClass, onClick);
+            paintRectanglePixelCoords(container, xPix, yStartPix, roadLength, edgeLength, roadClass, makeDetailClick(onClick, 2, false));
         }
         if (tile.edges[3] === "r") {
             // right
             var xPix = xStartPix + tileLength - edgeLength;
             var yPix = yStartPix + (tileLength / 2) - (roadLength / 2);
-            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass, onClick);
+            paintRectanglePixelCoords(container, xPix, yPix, edgeLength, roadLength, roadClass, makeDetailClick(onClick, 3, false));
+        }
+
+        // Interior roads.
+        if (tile.interior[0] === "r" || tile.interior[0] === "e") {
+            // Bottom
+            var xPix = xStartPix + halfTileLength - (roadLength / 2);
+            var yPix = yStartPix + halfTileLength;
+            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass, makeDetailClick(onClick, 0, true));
+        }
+        if (tile.interior[1] === "r" || tile.interior[1] === "e") {
+            // Left
+            var xPix = xStartPix + edgeLength;
+            var yPix = yStartPix + halfTileLength - roadLength / 2;
+            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass, makeDetailClick(onClick, 1, true));
+        }
+        if (tile.interior[2] === "r" || tile.interior[2] === "e") {
+            // Top
+            var xPix = xStartPix + halfTileLength - (roadLength / 2);
+            var yPix = yStartPix + edgeLength;
+            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass, makeDetailClick(onClick, 2, true));
+        }
+        if (tile.interior[3] === "r" || tile.interior[3] === "e") {
+            // Right
+            var xPix = xStartPix + halfTileLength;
+            var yPix = yStartPix + halfTileLength - roadLength / 2;
+            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass, makeDetailClick(onClick, 3, true));
         }
 
         // Draw cities.
+        var cityClass = addClass + " city";
         if (tile.edges[0] === "c") {
             // Bottom
             var points = [
@@ -46,7 +87,7 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength, yStartPix + tileLength]
             ];
 
-            makePolygon(container, points, addClass + " city", onClick);
+            makePolygon(container, points, cityClass, makeDetailClick(onClick, 0, false));
         }
         if (tile.edges[1] === "c") {
             // Left
@@ -57,7 +98,7 @@ define(['d3'], function (d3) {
                 [xStartPix, yStartPix + tileLength]
             ];
 
-            makePolygon(container, points, addClass + " city", onClick);
+            makePolygon(container, points, cityClass, makeDetailClick(onClick, 1, false));
         }
         if (tile.edges[2] === "c") {
             // Top
@@ -68,7 +109,7 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength, yStartPix]
             ];
 
-            makePolygon(container, points, addClass + " city", onClick);
+            makePolygon(container, points, cityClass, makeDetailClick(onClick, 2, false));
         }
         if (tile.edges[3] === "c") {
             // Right 
@@ -79,51 +120,17 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength, yStartPix + tileLength]
             ];
 
-            makePolygon(container, points, addClass + " city", onClick);
-        }
-
-        // For now, just draw cities in triangles and roads to the center. 
-        // Will need to get better than this later. Maybe change the encoding.
-
-        // TODO: Draw interior 'e' properly
-        // TODO: Sheilds.
-
-        // Draw interior roads.
-        var halfTileLength = tileLength / 2;
-        if (tile.interior[0] === "r" || tile.interior[0] === "e") {
-            // Bottom
-            var xPix = xStartPix + halfTileLength - (roadLength / 2);
-            var yPix = yStartPix + halfTileLength;
-            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass, onClick);
-        }
-        if (tile.interior[1] === "r" || tile.interior[1] === "e") {
-            // Left
-            var xPix = xStartPix + edgeLength;
-            var yPix = yStartPix + halfTileLength - roadLength / 2;
-            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass, onClick);
-        }
-        if (tile.interior[2] === "r" || tile.interior[2] === "e") {
-            // Top
-            var xPix = xStartPix + halfTileLength - (roadLength / 2);
-            var yPix = yStartPix + edgeLength;
-            paintRectanglePixelCoords(container, xPix, yPix, roadLength, halfTileLength - edgeLength, roadClass, onClick);
-        }
-        if (tile.interior[3] === "r" || tile.interior[3] === "e") {
-            // Right
-            var xPix = xStartPix + halfTileLength;
-            var yPix = yStartPix + halfTileLength - roadLength / 2;
-            paintRectanglePixelCoords(container, xPix, yPix, halfTileLength - edgeLength, roadLength, roadClass, onClick);
+            makePolygon(container, points, cityClass, makeDetailClick(onClick, 3, false));
         }
 
         // Draw interior cities.
-        var centerPoint = [xStartPix + halfTileLength, yStartPix + halfTileLength];
         if (tile.interior[0] === "c") {
             var points = [
                 centerPoint,
                 [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
                 [xStartPix + edgeLength, yStartPix + tileLength - edgeLength]
             ];
-            makePolygon(container, points, addClass + " city", onClick);
+            makePolygon(container, points, cityClass, makeDetailClick(onClick, 0, true));
         }
         if (tile.interior[1] === "c") {
             var points = [
@@ -131,7 +138,7 @@ define(['d3'], function (d3) {
                 [xStartPix + edgeLength, yStartPix + tileLength - edgeLength],
                 [xStartPix + edgeLength, yStartPix + edgeLength]
             ];
-            makePolygon(container, points, addClass + " city", onClick);
+            makePolygon(container, points, cityClass, makeDetailClick(onClick, 1, true));
         }
         if (tile.interior[2] === "c") {
             var points = [
@@ -139,7 +146,7 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength - edgeLength, yStartPix + edgeLength],
                 [xStartPix + edgeLength, yStartPix + edgeLength]
             ];
-            makePolygon(container, points, addClass + " city", onClick);
+            makePolygon(container, points, cityClass, makeDetailClick(onClick, 2, true));
         }
         if (tile.interior[3] === "c") {
             var points = [
@@ -147,12 +154,15 @@ define(['d3'], function (d3) {
                 [xStartPix + tileLength - edgeLength, yStartPix + tileLength - edgeLength],
                 [xStartPix + tileLength - edgeLength, yStartPix + edgeLength]
             ];
-            makePolygon(container, points, addClass + " city", onClick);
+            makePolygon(container, points, cityClass, makeDetailClick(onClick, 3, true));
         }
 
         if (tile.hasCloister) {
-            paintCloister(container, xStartPix, yStartPix, addClass + " cloister", onClick);
+            paintCloister(container, xStartPix, yStartPix, addClass + " cloister", makeDetailClick(onClick, undefined, undefined, true));
         }
+
+        // TODO: Draw interior 'e' properly
+        // TODO: Sheilds.
         //if (tile.hasShield) {
         //    drawSheild();
         //}
@@ -197,10 +207,10 @@ define(['d3'], function (d3) {
         }
     }
 
-    function paintTile(x, y, tile) {
+    function paintTile(x, y, tile, onClick) {
         var xPix = x * gameSettings.tileLength;
         var yPix = y * gameSettings.tileLength;
-        paintTilePixelCoords(boardContainer, xPix, yPix, tile, PLACED_TILE_CLASS);
+        paintTilePixelCoords(boardContainer, xPix, yPix, tile, PLACED_TILE_CLASS, onClick);
     }
 
     function paintTilePixelCoords(container, x, y, tile, addClass, onClick) {
@@ -265,13 +275,18 @@ define(['d3'], function (d3) {
     }
 
     // REWRITE WITH BETTER D3.
-    function redrawBoard(placedTiles) {
+    function redrawBoard(placedTiles, newTileX, newTileY, newTileClick) {
         clearBoard();
 
         for (var i = 0; i < placedTiles.length; i++) {
             for (var j = 0; j < placedTiles[i].length; j++) {
                 if (placedTiles[i][j] != null) {
-                    paintTile(i, j, placedTiles[i][j]);
+                    if (newTileX === i && newTileY === j) {
+                        // Newly placed tile, paint with follower callbacks.
+                        paintTile(i, j, placedTiles[i][j], newTileClick);
+                    } else {
+                        paintTile(i, j, placedTiles[i][j]);
+                    }
                 }
             }
         }

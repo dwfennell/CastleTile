@@ -69,8 +69,17 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
     };
 
     function placeTile(x, y, tile) {
+        // Coordinates change when placing in 0th rows/columns.
+        var placedX = x == 0 ? 1 : x;
+        var placedY = y == 0 ? 1 : y;
+
+        var followerPlaced = function followerPlaced(index, isInterior) {
+            // Called in response to new tile clicks
+            debugger;
+        };
+
         tiles.updateTilesArray(tiles.placedTiles, x, y, tile);
-        boardDraw.redrawBoard(tiles.placedTiles);
+        boardDraw.redrawBoard(tiles.placedTiles, placedX, placedY, followerPlaced);
     }
     
     function init() {
