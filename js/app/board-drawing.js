@@ -1,20 +1,75 @@
 "use strict";
 define(['d3'], function (d3) {
 
-    function drawFollower(tile, index, isInterior, isCloister) {
-        debugger;
+    function getFollowerCenterCoords(xStart, yStart, index, isInterior, isCloister) {
+        var tileLength = gameSettings.tileLength;
+        var edgeLength = tileLength * gameSettings.edgeSize;
+
+        var xMid = xStart + (tileLength / 2);
+        var yMid = yStart + (tileLength / 2);
+        var xEnd = xStart + tileLength;
+        var yEnd = yStart + tileLength;
+
+        if (isCloister) {
+            // Assume cloisters at center.
+            return { x: xMid, y: yMid };
+        }
+
+        var interiorOffset = ((tileLength / 2) - edgeLength) / 2;
+        var edgeOffset = edgeLength / 2;
+
+        var interior = [
+            [xMid, yMid + interiorOffset], // Bottom
+            [xMid - interiorOffset, yMid], // Left 
+            [xMid, yMid - interiorOffset], // Top
+            [xMid + interiorOffset, yMid] // Right
+        ];
+
+        var edges = [
+            [xMid, yEnd - edgeOffset], // Bottom
+            [xStart + edgeOffset, yMid], // Left
+            [xMid, yStart + edgeOffset], // Top
+            [xEnd - edgeOffset, yMid] // Right
+        ];
+
+        return isInterior ? { x: interior[index][0], y: interior[index][1] } : { x: edges[index][0], y: edges[index][1] };
     }
 
-    function paintTileDetails(container, xStartPix, yStartPix, tile, addClass, onClick) {
+
+    function drawFollower(container, xStart, yStart, tile, newFollower, index, isInterior, isCloister) {
+        // Clear existing new followers.
+        d3.selectAll("." + NEW_FOLLOWER_CLASS).remove();
+
+        var followerLength = gameSettings.tileLength * gameSettings.followerSize;
+        var halfFollowerLength = followerLength / 2;
+        var cen = getFollowerCenterCoords(xStart, yStart, index, isInterior, isCloister);
+
+        // Just a triangle. 
+        var points = [
+            [cen.x + halfFollowerLength, cen.y + halfFollowerLength], 
+            [cen.x - halfFollowerLength, cen.y + halfFollowerLength],
+            [cen.x, cen.y - halfFollowerLength]
+        ];
+
+        var followerClass = newFollower ? FOLLOWER_CLASS + " " + NEW_FOLLOWER_CLASS : FOLLOWER_CLASS;
+        makePolygon(container, points, followerClass);
+    }
+
+    function paintTileDetails(container, xStartPix, yStartPix, tile, isNewPlacedTile, addClass, onClick) {
         if (!addClass) addClass = "";
 
         // Place follower click handlers. 
         // OnClick is passed down from the controller class; handles business logic. 
         function makeDetailClick(onClick, index, isInterior, isCloister) {
-            return function () {
-                debugger;
-                drawFollower(tile, index, isInterior, isCloister);
-                onClick(index, isInterior, isCloister);
+            if (isNewPlacedTile) {
+                return function () {
+                    drawFollower(container, xStartPix, yStartPix, tile, true, index, isInterior, isCloister);
+                    onClick(index, isInterior, isCloister);
+                };
+            } else if (onClick) {
+                return onClick;
+            } else {
+                return function () { };
             }
         }
 
@@ -161,6 +216,11 @@ define(['d3'], function (d3) {
             paintCloister(container, xStartPix, yStartPix, addClass + " cloister", makeDetailClick(onClick, undefined, undefined, true));
         }
 
+        if (tile.follower) {
+            // If a tile has a follower on it, draw that follower.
+            drawFollower(container, xStartPix, yStartPix, tile, false, tile.follower.positionIndex, tile.follower.isInterior, tile.follower.isCloister);
+        }
+
         // TODO: Draw interior 'e' properly
         // TODO: Sheilds.
         //if (tile.hasShield) {
@@ -201,28 +261,27 @@ define(['d3'], function (d3) {
             .attr("d", line(points))
             .attr("class", addClass);
 
-         //Add onClick callback.
         if (onClick) {
             d3.selectAll("." + idClass).on("click", onClick);
         }
     }
 
-    function paintTile(x, y, tile, onClick) {
+    function paintTile(x, y, tile, isNewPlacedTile, onClick) {
         var xPix = x * gameSettings.tileLength;
         var yPix = y * gameSettings.tileLength;
-        paintTilePixelCoords(boardContainer, xPix, yPix, tile, PLACED_TILE_CLASS, onClick);
+        paintTilePixelCoords(boardContainer, xPix, yPix, tile, isNewPlacedTile, PLACED_TILE_CLASS, onClick);
     }
 
-    function paintTilePixelCoords(container, x, y, tile, addClass, onClick) {
+    function paintTilePixelCoords(container, x, y, tile, isNewPlacedTile, addClass, onClick) {
         if (!addClass) addClass = "";
 
         paintSquarePixelCoords(container, x, y, "tile " + addClass, onClick);
-        paintTileDetails(container, x, y, tile, addClass, onClick);
+        paintTileDetails(container, x, y, tile, isNewPlacedTile, addClass, onClick);
     }
 
     function paintNewTile(tile, rotateCallback) {
         resetNewTile();
-        paintTilePixelCoords(newTileContainer, 0, 0, tile, UNPLACED_TILE_CLASS, rotateCallback);
+        paintTilePixelCoords(newTileContainer, 0, 0, tile, false, UNPLACED_TILE_CLASS, rotateCallback);
     }
 
     function resetNewTile() {
@@ -251,7 +310,6 @@ define(['d3'], function (d3) {
             .attr("width", width)
             .attr("class", addClass);
 
-        // Add onClick callback.
         if (onClick) {
             d3.selectAll("." + idClass).on("click", onClick);
         }
@@ -271,6 +329,7 @@ define(['d3'], function (d3) {
 
     function clearBoard() {
         d3.selectAll("." + PLACED_TILE_CLASS).remove();
+        d3.selectAll("." + FOLLOWER_CLASS).remove();
         d3.selectAll("." + gameSettings.availableSpaceIdentifier).remove();
     }
 
@@ -283,7 +342,7 @@ define(['d3'], function (d3) {
                 if (placedTiles[i][j] != null) {
                     if (newTileX === i && newTileY === j) {
                         // Newly placed tile, paint with follower callbacks.
-                        paintTile(i, j, placedTiles[i][j], newTileClick);
+                        paintTile(i, j, placedTiles[i][j], true, newTileClick);
                     } else {
                         paintTile(i, j, placedTiles[i][j]);
                     }
@@ -317,6 +376,8 @@ define(['d3'], function (d3) {
     var AVAILABLE_SPACE_CLASS = "can-place";
     var UNPLACED_TILE_CLASS = "unplaced-tile";
     var PLACED_TILE_CLASS = "placed-tile";
+    var FOLLOWER_CLASS = "follower";
+    var NEW_FOLLOWER_CLASS = "new-follower";
 
     return {
         init: init,

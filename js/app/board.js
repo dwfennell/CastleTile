@@ -73,9 +73,15 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
         var placedX = x == 0 ? 1 : x;
         var placedY = y == 0 ? 1 : y;
 
-        var followerPlaced = function followerPlaced(index, isInterior) {
+        var followerPlaced = function followerPlaced(index, isInterior, isCloister) {
             // Called in response to new tile clicks
-            debugger;
+            tile.follower = {
+                tileX: x,
+                tileY: y,
+                positionIndex: index,
+                isInterior: isInterior,
+                isCloister: isCloister
+            };
         };
 
         tiles.updateTilesArray(tiles.placedTiles, x, y, tile);
@@ -84,9 +90,7 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
     
     function init() {
         isFirstTurn = true;
-
         boardDraw.init(gameSettings);
-
         d3.select("#" + gameSettings.newTileButtonIdentifier)
             .on('click', getNewTile)
     }
