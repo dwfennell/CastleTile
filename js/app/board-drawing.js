@@ -381,10 +381,8 @@ define(['d3'], function (d3) {
 
     return {
         init: init,
-        paintTile: paintTile,
-        resetNewTile: resetNewTile,
+        resetNewTile: resetNewTile, 
         paintNewTile: paintNewTile,
-        clearBoard: clearBoard,
         redrawBoard: redrawBoard,
         paintAvailableSpace: paintAvailableSpace,
         clearAvailableSpaces: clearAvailableSpaces
