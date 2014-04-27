@@ -36,7 +36,7 @@ define(['d3'], function (d3) {
     }
 
 
-    function drawFollower(container, xStart, yStart, tile, newFollower, index, isInterior, isCloister) {
+    function drawFollower(container, xStart, yStart, newFollower, index, isInterior, isCloister) {
         // Clear existing new followers.
         d3.selectAll("." + NEW_FOLLOWER_CLASS).remove();
 
@@ -63,7 +63,7 @@ define(['d3'], function (d3) {
         function makeDetailClick(onClick, index, isInterior, isCloister) {
             if (isNewPlacedTile) {
                 return function () {
-                    drawFollower(container, xStartPix, yStartPix, tile, true, index, isInterior, isCloister);
+                    drawFollower(container, xStartPix, yStartPix, true, index, isInterior, isCloister);
                     onClick(index, isInterior, isCloister);
                 };
             } else if (onClick) {
@@ -218,7 +218,7 @@ define(['d3'], function (d3) {
 
         if (tile.follower) {
             // If a tile has a follower on it, draw that follower.
-            drawFollower(container, xStartPix, yStartPix, tile, false, tile.follower.positionIndex, tile.follower.isInterior, tile.follower.isCloister);
+            drawFollower(container, xStartPix, yStartPix, false, tile.follower.positionIndex, tile.follower.isInterior, tile.follower.isCloister);
         }
 
         // TODO: Draw interior 'e' properly
@@ -272,8 +272,59 @@ define(['d3'], function (d3) {
         paintTilePixelCoords(boardContainer, xPix, yPix, tile, isNewPlacedTile, PLACED_TILE_CLASS, onClick);
     }
 
+    function makeNewSquareOnClick(container, xStart, yStart, addClass, onClick) {
+        return function () {
+            if (!this) {
+                // Didn't click on an svg element, return
+                return;
+            }
+
+            var clickCoords = d3.mouse(this);
+            var relativeX = clickCoords[0] - xStart;
+            var relativeY = clickCoords[1] - yStart;
+            var tileLength = gameSettings.tileLength;
+            var edgeLength = gameSettings.tileLength * gameSettings.edgeSize;
+            
+            // Determine interior/edge click.
+            var isInterior = false;
+            if (relativeX > edgeLength && relativeY > edgeLength && (tileLength - relativeX) > edgeLength && (tileLength - relativeY) > edgeLength) {
+                isInterior = true;
+            }
+
+            // Determine which quadrant of the square was clicked. 
+            var isTopRight = relativeX > relativeY;
+            var isBottomRight = relativeX + relativeY > tileLength;
+            if (isTopRight && isBottomRight) {
+                // Right.
+                var index = 3;
+            } else if (isTopRight && !isBottomRight) {
+                // Top.
+                var index = 2;
+            } else if (!isTopRight && isBottomRight) {
+                // Bottom.
+                var index = 0;
+            } else if (!isTopRight && !isBottomRight) {
+                // Left.
+                var index = 1;
+            }
+            
+            // Draw follower. 
+            drawFollower(container, xStart, yStart, true, index, isInterior, false);
+            
+            if (onClick) {
+                onClick(index, isInterior, false);
+            }
+        }
+
+    }
+
+
     function paintTilePixelCoords(container, x, y, tile, isNewPlacedTile, addClass, onClick) {
         if (!addClass) addClass = "";
+
+        if (isNewPlacedTile) {
+            onClick = makeNewSquareOnClick(container, x, y, addClass, onClick);
+        }
 
         paintSquarePixelCoords(container, x, y, "tile " + addClass, onClick);
         paintTileDetails(container, x, y, tile, isNewPlacedTile, addClass, onClick);
