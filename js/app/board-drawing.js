@@ -1,7 +1,7 @@
 "use strict";
 define(['d3'], function (d3) {
 
-    function getFollowerCenterCoords(xStart, yStart, index, isInterior, isCloister) {
+    function getFollowerCenterCoords(xStart, yStart, index, isInterior, isCloister, isField) {
         var tileLength = gameSettings.tileLength;
         var edgeLength = tileLength * gameSettings.edgeSize;
 
@@ -13,40 +13,56 @@ define(['d3'], function (d3) {
         if (isCloister) {
             // Assume cloisters at center.
             return { x: xMid, y: yMid };
+        } else if (isField) {
+            var fieldPositionLength = tileLength * gameSettings.followerFieldPosition;
+            var fieldPoints = [
+                [xMid + fieldPositionLength, yEnd - fieldPositionLength],
+                [xMid - fieldPositionLength, yEnd - fieldPositionLength],
+                [xStart + fieldPositionLength, yMid + fieldPositionLength],
+                [xStart + fieldPositionLength, yMid - fieldPositionLength],
+                [xMid - fieldPositionLength, yStart + fieldPositionLength],
+                [xMid + fieldPositionLength, yStart + fieldPositionLength],
+                [xEnd - fieldPositionLength, yMid - fieldPositionLength],
+                [xEnd - fieldPositionLength, yMid + fieldPositionLength]
+            ];
+
+            return { x: fieldPoints[index][0], y: fieldPoints[index][1] };
+        } else {
+            // Road and city clicks.
+
+            var interiorOffset = ((tileLength / 2) - edgeLength) / 2;
+            var edgeOffset = edgeLength / 2;
+
+            var interior = [
+                [xMid, yMid + interiorOffset], // Bottom
+                [xMid - interiorOffset, yMid], // Left 
+                [xMid, yMid - interiorOffset], // Top
+                [xMid + interiorOffset, yMid] // Right
+            ];
+
+            var edges = [
+                [xMid, yEnd - edgeOffset], // Bottom
+                [xStart + edgeOffset, yMid], // Left
+                [xMid, yStart + edgeOffset], // Top
+                [xEnd - edgeOffset, yMid] // Right
+            ];
+
+            return isInterior ? { x: interior[index][0], y: interior[index][1] } : { x: edges[index][0], y: edges[index][1] };
         }
-
-        var interiorOffset = ((tileLength / 2) - edgeLength) / 2;
-        var edgeOffset = edgeLength / 2;
-
-        var interior = [
-            [xMid, yMid + interiorOffset], // Bottom
-            [xMid - interiorOffset, yMid], // Left 
-            [xMid, yMid - interiorOffset], // Top
-            [xMid + interiorOffset, yMid] // Right
-        ];
-
-        var edges = [
-            [xMid, yEnd - edgeOffset], // Bottom
-            [xStart + edgeOffset, yMid], // Left
-            [xMid, yStart + edgeOffset], // Top
-            [xEnd - edgeOffset, yMid] // Right
-        ];
-
-        return isInterior ? { x: interior[index][0], y: interior[index][1] } : { x: edges[index][0], y: edges[index][1] };
     }
 
 
-    function drawFollower(container, xStart, yStart, newFollower, index, isInterior, isCloister) {
+    function drawFollower(container, xStart, yStart, newFollower, index, isInterior, isCloister, isField) {
         // Clear existing new followers.
         d3.selectAll("." + NEW_FOLLOWER_CLASS).remove();
 
         var followerLength = gameSettings.tileLength * gameSettings.followerSize;
         var halfFollowerLength = followerLength / 2;
-        var cen = getFollowerCenterCoords(xStart, yStart, index, isInterior, isCloister);
+        var cen = getFollowerCenterCoords(xStart, yStart, index, isInterior, isCloister, isField);
 
         // Just a triangle. 
         var points = [
-            [cen.x + halfFollowerLength, cen.y + halfFollowerLength], 
+            [cen.x + halfFollowerLength, cen.y + halfFollowerLength],
             [cen.x - halfFollowerLength, cen.y + halfFollowerLength],
             [cen.x, cen.y - halfFollowerLength]
         ];
@@ -218,7 +234,7 @@ define(['d3'], function (d3) {
 
         if (tile.follower) {
             // If a tile has a follower on it, draw that follower.
-            drawFollower(container, xStartPix, yStartPix, false, tile.follower.positionIndex, tile.follower.isInterior, tile.follower.isCloister);
+            drawFollower(container, xStartPix, yStartPix, false, tile.follower.positionIndex, tile.follower.isInterior, tile.follower.isCloister, tile.follower.isFieldClicked);
         }
 
         // TODO: Draw interior 'e' properly
@@ -280,39 +296,35 @@ define(['d3'], function (d3) {
             }
 
             var clickCoords = d3.mouse(this);
-            var relativeX = clickCoords[0] - xStart;
-            var relativeY = clickCoords[1] - yStart;
-            var tileLength = gameSettings.tileLength;
-            var edgeLength = gameSettings.tileLength * gameSettings.edgeSize;
-            
-            // Determine interior/edge click.
-            var isInterior = false;
-            if (relativeX > edgeLength && relativeY > edgeLength && (tileLength - relativeX) > edgeLength && (tileLength - relativeY) > edgeLength) {
-                isInterior = true;
-            }
 
-            // Determine which quadrant of the square was clicked. 
-            var isTopRight = relativeX > relativeY;
-            var isBottomRight = relativeX + relativeY > tileLength;
-            if (isTopRight && isBottomRight) {
-                // Right.
-                var index = 3;
-            } else if (isTopRight && !isBottomRight) {
-                // Top.
-                var index = 2;
-            } else if (!isTopRight && isBottomRight) {
-                // Bottom.
-                var index = 0;
-            } else if (!isTopRight && !isBottomRight) {
-                // Left.
-                var index = 1;
+            var relativeX = clickCoords[0] - xStart,
+                relativeY = clickCoords[1] - yStart,
+                tileLength = gameSettings.tileLength,
+                halfTileLength = tileLength / 2;
+            
+            var topClicked = relativeY < halfTileLength,
+                leftClicked = relativeX < halfTileLength,
+                isTopRight = relativeX > relativeY,
+                isBottomRight = relativeX + relativeY > tileLength,
+                index;
+
+            // Field clicks use a different coordinate system.
+            // It is divided into 8 triangles counting clockwise from the southeast.
+            if (!topClicked && !leftClicked) {
+                index = isTopRight ? 7 : 0;
+            } else if (!topClicked && leftClicked) {
+                index = isBottomRight ? 1 : 2;
+            } else if (topClicked && leftClicked) {
+                index = isTopRight ? 4 : 3;
+            } else if (topClicked && !leftClicked) {
+                index = isBottomRight ? 6 : 5;
             }
             
             // Draw follower. 
-            drawFollower(container, xStart, yStart, true, index, isInterior, false);
-            
+            drawFollower(container, xStart, yStart, true, index, false, false, true);
+
             if (onClick) {
-                onClick(index, isInterior, false);
+                onClick(index, false, false, true);
             }
         }
 
@@ -432,7 +444,7 @@ define(['d3'], function (d3) {
 
     return {
         init: init,
-        resetNewTile: resetNewTile, 
+        resetNewTile: resetNewTile,
         paintNewTile: paintNewTile,
         redrawBoard: redrawBoard,
         paintAvailableSpace: paintAvailableSpace,

@@ -73,14 +73,15 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
         var placedX = x == 0 ? 1 : x;
         var placedY = y == 0 ? 1 : y;
 
-        var followerPlaced = function followerPlaced(index, isInterior, isCloister) {
+        var followerPlaced = function followerPlaced(index, isInterior, isCloister, isFieldClicked) {
             // Called in response to new tile clicks
             tile.follower = {
                 tileX: x,
                 tileY: y,
                 positionIndex: index,
                 isInterior: isInterior,
-                isCloister: isCloister
+                isCloister: isCloister,
+                isFieldClicked: isFieldClicked
             };
         };
 
