@@ -51,24 +51,30 @@ define(['d3'], function (d3) {
         }
     }
 
+    function pixelToTileCoords(value) {
+        return Math.floor(value / gameSettings.tileLength);
+    }
 
     function drawFollower(container, xStart, yStart, newFollower, index, isInterior, isCloister, isField) {
-        // Clear existing new followers.
-        d3.selectAll("." + NEW_FOLLOWER_CLASS).remove();
+        if (!canPlaceFollower || (canPlaceFollower && canPlaceFollower(pixelToTileCoords(xStart), pixelToTileCoords(yStart), index, isInterior, isField))) {
 
-        var followerLength = gameSettings.tileLength * gameSettings.followerSize;
-        var halfFollowerLength = followerLength / 2;
-        var cen = getFollowerCenterCoords(xStart, yStart, index, isInterior, isCloister, isField);
+            // Clear existing new followers.
+            d3.selectAll("." + NEW_FOLLOWER_CLASS).remove();
 
-        // Just a triangle. 
-        var points = [
-            [cen.x + halfFollowerLength, cen.y + halfFollowerLength],
-            [cen.x - halfFollowerLength, cen.y + halfFollowerLength],
-            [cen.x, cen.y - halfFollowerLength]
-        ];
+            var followerLength = gameSettings.tileLength * gameSettings.followerSize;
+            var halfFollowerLength = followerLength / 2;
+            var cen = getFollowerCenterCoords(xStart, yStart, index, isInterior, isCloister, isField);
 
-        var followerClass = newFollower ? FOLLOWER_CLASS + " " + NEW_FOLLOWER_CLASS : FOLLOWER_CLASS;
-        makePolygon(container, points, followerClass);
+            // Just a triangle. 
+            var points = [
+                [cen.x + halfFollowerLength, cen.y + halfFollowerLength],
+                [cen.x - halfFollowerLength, cen.y + halfFollowerLength],
+                [cen.x, cen.y - halfFollowerLength]
+            ];
+
+            var followerClass = newFollower ? FOLLOWER_CLASS + " " + NEW_FOLLOWER_CLASS : FOLLOWER_CLASS;
+            makePolygon(container, points, followerClass);
+        }
     }
 
     function paintTileDetails(container, xStartPix, yStartPix, tile, isNewPlacedTile, addClass, onClick) {
@@ -330,7 +336,6 @@ define(['d3'], function (d3) {
 
     }
 
-
     function paintTilePixelCoords(container, x, y, tile, isNewPlacedTile, addClass, onClick) {
         if (!addClass) addClass = "";
 
@@ -414,7 +419,7 @@ define(['d3'], function (d3) {
         }
     }
 
-    function init(settings) {
+    function init(settings, canPlaceFollowerCallback) {
         gameSettings = settings;
         squareId = 1;
 
@@ -427,9 +432,12 @@ define(['d3'], function (d3) {
             .append("svg:svg")
             .attr("width", gameSettings.tileLength)
             .attr("height", gameSettings.tileLength);
+
+        canPlaceFollower = canPlaceFollowerCallback;
     }
 
     var gameSettings;
+    var canPlaceFollower;
     var boardContainer;
     var newTileContainer;
     var squareId;

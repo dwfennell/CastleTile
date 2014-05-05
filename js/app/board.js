@@ -89,11 +89,16 @@ define(['app/tiles', 'app/board-drawing', 'app/settings', 'data/base-set', 'd3']
         boardDraw.redrawBoard(tiles.placedTiles, placedX, placedY, followerPlaced);
     }
     
+    function canPlaceFollower(x, y, index, isInterior, isFieldClicked) {
+        var followerTile = tiles.placedTiles[x, y];
+        
+        return true;
+    }
+
     function init() {
         isFirstTurn = true;
-        boardDraw.init(gameSettings);
-        d3.select("#" + gameSettings.newTileButtonIdentifier)
-            .on('click', getNewTile)
+        boardDraw.init(gameSettings, canPlaceFollower);
+        d3.select("#" + gameSettings.newTileButtonIdentifier).on('click', getNewTile);
     }
 
     var isFirstTurn;
