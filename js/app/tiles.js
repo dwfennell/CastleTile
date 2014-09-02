@@ -22,7 +22,12 @@ define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
                 edgeBottom: input.edges[0],
                 edgeLeft: input.edges[1],
                 edgeTop: input.edges[2],
-                edgeRight: input.edges[3]
+                edgeRight: input.edges[3],
+                isClosedEdges: [false, false, false, false],
+                isClosedInterior: [false, false, false, false],
+                hasFollowerEdges: [false, false, false, false],
+                hasFollowerInterior: [false, false, false, false],
+                hasFollowerField: [false, false, false, false, false, false, false, false]
             };
         }
 
@@ -188,6 +193,47 @@ define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
         }
     }
 
+    function canPlaceFollowerAtTileLocation(tile, index, isInterior, isFieldClicked) {
+        
+    }
+
+    function canPlaceFollower(x, y, index, isInterior, isFieldClicked, checkedTiles) {
+        var newTile = false;
+        if (checkedTiles === undefined) {
+            checkedTiles = {};
+            newTile = true;
+        }
+
+        checkedTiles[x + "_" + y] = true;
+
+        var tile = placedTiles[x][y];
+
+        if (!newTile && !isFieldClicked) {
+            var isClosed = isInterior ? tile.isClosedInterior[index] : tile.isClosedEdges[index];
+            if (isClosed === true) {
+                // Clicked location is finished, can't place follower.
+                return false;
+            }
+        }
+
+        if (tile.follower) {
+            debugger;
+            
+        }
+
+
+        // location could be closed off, or open and have a follower on it. 
+
+
+
+        
+
+        //debugger;
+
+
+
+        return true;
+    }
 
     var pile = [];
     var startTile = parseTiles(tileDefinitions);
@@ -204,6 +250,7 @@ define(['data/base-set', 'd3'], function (tileDefinitions, d3) {
         isMoreTiles: isMoreTiles,
         rotateTile: rotateTile,
         updateTilesArray: updateTilesArray,
-        isSpaceAvailable: canPlace
+        isSpaceAvailable: canPlace,
+        canPlaceFollower: canPlaceFollower
     };
 });

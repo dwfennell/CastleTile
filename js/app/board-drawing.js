@@ -56,7 +56,7 @@ define(['d3'], function (d3) {
     }
 
     function drawFollower(container, xStart, yStart, newFollower, index, isInterior, isCloister, isField) {
-        if (!canPlaceFollower || (canPlaceFollower && canPlaceFollower(pixelToTileCoords(xStart), pixelToTileCoords(yStart), index, isInterior, isField))) {
+        //if (!canPlaceFollower || (canPlaceFollower && canPlaceFollower(pixelToTileCoords(xStart), pixelToTileCoords(yStart), index, isInterior, isField))) {
 
             // Clear existing new followers.
             d3.selectAll("." + NEW_FOLLOWER_CLASS).remove();
@@ -74,7 +74,7 @@ define(['d3'], function (d3) {
 
             var followerClass = newFollower ? FOLLOWER_CLASS + " " + NEW_FOLLOWER_CLASS : FOLLOWER_CLASS;
             makePolygon(container, points, followerClass);
-        }
+       // }
     }
 
     function paintTileDetails(container, xStartPix, yStartPix, tile, isNewPlacedTile, addClass, onClick) {
@@ -85,7 +85,9 @@ define(['d3'], function (d3) {
         function makeDetailClick(onClick, index, isInterior, isCloister) {
             if (isNewPlacedTile) {
                 return function () {
-                    drawFollower(container, xStartPix, yStartPix, true, index, isInterior, isCloister);
+                    if (!canPlaceFollower || (canPlaceFollower && canPlaceFollower(pixelToTileCoords(xStartPix), pixelToTileCoords(yStartPix), index, isInterior, false))) {
+                        drawFollower(container, xStartPix, yStartPix, true, index, isInterior, isCloister);
+                    }
                     onClick(index, isInterior, isCloister);
                 };
             } else if (onClick) {
@@ -327,7 +329,9 @@ define(['d3'], function (d3) {
             }
             
             // Draw follower. 
-            drawFollower(container, xStart, yStart, true, index, false, false, true);
+            //if (!canPlaceFollower || (canPlaceFollower && canPlaceFollower(pixelToTileCoords(xStart), pixelToTileCoords(yStart), index, isInterior, isField))) {
+                drawFollower(container, xStart, yStart, true, index, false, false, true);
+            //}
 
             if (onClick) {
                 onClick(index, false, false, true);
